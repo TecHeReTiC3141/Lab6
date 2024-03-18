@@ -1,0 +1,11 @@
+info
+help
+show
+add {id=2,name=test,coordinatesX=55,coordinatesY=3,creationDate=2024/01/09-21:45:50,toX=7.4,toY=3.4,toZ=0.1,toName=sdsdf,distance=10000.0,fromX=5,fromY=2,fromZ=10.0}
+add {id=10,name=test2,coordinatesX=55,coordinatesY=3,creationDate=2024/01/09-21:45:50,toX=7.4,toY=3.4,toZ=0.1,toName=sdsdf,distance=10000.0,fromX=5,fromY=2,fromZ=10.0}
+remove_by_id 2
+remove_by_id 10
+show
+clear
+show
+execute_script scriptB.txt
