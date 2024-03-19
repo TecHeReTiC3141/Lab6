@@ -44,7 +44,7 @@ public class Server {
 
     private final SendResponseModule sendResponseModule;
 
-    private final int port = 1234;
+    private final int port = System.getenv("PORT") != null ? Integer.parseInt(System.getenv("PORT")) : 1234;
 
     private static final Logger logger = LogManager.getLogger("server");
 
@@ -70,7 +70,6 @@ public class Server {
 
         Selector selector = Selector.open();
         channel.register(selector, SelectionKey.OP_ACCEPT);
-        Map<SocketChannel, StringBuilder> clientDataMap = new HashMap<>();
         startSavingTask(saveInterval);
 
         try {
@@ -103,11 +102,10 @@ public class Server {
             }
         } catch (IOException e) {
             logger.warn("Client is disconnected");
-
         }
         saveCollection();
     }
-
+    // TODO: implement save command
     private void saveCollection() {
         try {
             if (manager.getIsEmpty()) {

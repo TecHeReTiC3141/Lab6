@@ -9,6 +9,7 @@ import java.io.StreamCorruptedException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
 
 public class RequestReadModule {
 
@@ -31,7 +32,7 @@ public class RequestReadModule {
             Request request = (Request) fromClient.readObject();
             fromClientBuffer.clear();
             System.out.println(request);
-            byte[] response = executor.processCommand(request.getCommand(), request.getArgs(), request.getRoute()).getBytes();
+            byte[] response = executor.processCommand(request.getCommand(), request.getArgs(), request.getRoute()).getBytes(StandardCharsets.UTF_8);
             ByteBuffer responseBuffer = ByteBuffer.wrap(response);
             client.register(key.selector(), SelectionKey.OP_WRITE, responseBuffer);
         } catch (StreamCorruptedException e) {

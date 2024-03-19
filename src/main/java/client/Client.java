@@ -23,6 +23,8 @@ public class Client {
 
     private int depth = 0;
 
+    private final int recursionDepth = 100;
+
     public Client() {
         validators = new HashMap<>() {
             {
@@ -40,7 +42,7 @@ public class Client {
                 put("print_ascending", new NoArgumentsValidator());
                 put("print_field_descending_distance", new NoArgumentsValidator());
                 put("exit", new ExitValidator());
-                put("execute_script", new ExecuteScriptValidator());
+                put("execute_script", new ExecuteScriptValidator()); // TODO: implement validation of endless recursion
             }
         };
     }
@@ -56,16 +58,13 @@ public class Client {
     }
 
 
-    private final int port = 1234;
-
+    private final int port = System.getenv("PORT") != null ? Integer.parseInt(System.getenv("PORT")) : 1234;
 
     public void run() {
         try {
             openSocket();
             socketChannel.connect(new InetSocketAddress("localhost", port));
-
             SystemInConsole sc = new SystemInConsole();
-
 
             System.out.println("Приветствую вас в программе для работы с коллекцией Route! Введите help для получения списка команд");
             while (true) {
@@ -83,9 +82,11 @@ public class Client {
 
             closeSocket();
             System.out.println("Socket channel closed");
-        } catch (IOException e) {
+        } catch (
+                IOException e) {
             System.out.println(e.getMessage());
         }
+
     }
 
     private Request lineToRequest(String line) throws ExitException, NoSuchElementException {
@@ -113,7 +114,7 @@ public class Client {
 
     public void handleRequest(Request request) {
         if (request == null) return;
-        if (depth > 1000) {
+        if (depth > recursionDepth) {
             depth = 0;
             System.err.println("Превышена максимальная глубина рекурсии, вероятно, из-за рекурсивного вызова execute_script, проверьте скрипт на вызов самого себя");
             return;
@@ -131,7 +132,7 @@ public class Client {
 
     // TODO: fix recursion
     public void handleExecuteScript(Request request) {
-        if (depth > 1000) {
+        if (depth > recursionDepth) {
             depth = 0;
             System.err.println("Превышена максимальная глубина рекурсии, вероятно, из-за рекурсивного вызова execute_script, проверьте скрипт на вызов самого себя");
             return;
