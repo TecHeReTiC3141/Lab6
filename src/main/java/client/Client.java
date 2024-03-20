@@ -23,8 +23,6 @@ public class Client {
 
     private int depth = 0;
 
-    private final int recursionDepth = 100;
-
     public Client() {
         validators = new HashMap<>() {
             {
@@ -61,6 +59,7 @@ public class Client {
     private final int port = System.getenv("PORT") != null ? Integer.parseInt(System.getenv("PORT")) : 1234;
 
     public void run() {
+
         try {
             openSocket();
             socketChannel.connect(new InetSocketAddress("localhost", port));
@@ -114,11 +113,6 @@ public class Client {
 
     public void handleRequest(Request request) {
         if (request == null) return;
-        if (depth > recursionDepth) {
-            depth = 0;
-            System.err.println("Превышена максимальная глубина рекурсии, вероятно, из-за рекурсивного вызова execute_script, проверьте скрипт на вызов самого себя");
-            return;
-        }
         try {
             if (request.getCommand().equals("execute_script")) {
                 handleExecuteScript(request);
@@ -132,11 +126,6 @@ public class Client {
 
     // TODO: fix recursion
     public void handleExecuteScript(Request request) {
-        if (depth > recursionDepth) {
-            depth = 0;
-            System.err.println("Превышена максимальная глубина рекурсии, вероятно, из-за рекурсивного вызова execute_script, проверьте скрипт на вызов самого себя");
-            return;
-        }
         String filename = request.getArgs()[0];
         try (FileReader reader = new FileReader(filename)) {
             FileConsole console = new FileConsole(reader);
@@ -152,7 +141,6 @@ public class Client {
     }
 
     public void makeRequest(Request request) throws IOException {
-        // TODO: do not create new stream every time
         ByteArrayOutputStream bais = new ByteArrayOutputStream();
         ObjectOutputStream toServer = new ObjectOutputStream(bais);
         toServer.writeObject(request);

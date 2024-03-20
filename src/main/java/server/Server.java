@@ -13,6 +13,7 @@ import server.serverModules.SendResponseModule;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
@@ -48,6 +49,8 @@ public class Server {
 
     private static final Logger logger = LogManager.getLogger("server");
 
+    private ServerSocketChannel channel;
+
 
     /**
      * Конструктор приложения
@@ -60,11 +63,32 @@ public class Server {
         this.sendResponseModule = new SendResponseModule();
     }
 
+    public void openSocket() throws IOException {
+        channel = ServerSocketChannel.open();
+    }
+
+    public void closeSocket() throws IOException {
+        if (channel != null && channel.isOpen()) {
+            channel.close();
+        }
+    }
+
     public void run() throws IOException, ClassNotFoundException {
         this.manager.loadInitialCollection();
         InetSocketAddress address = new InetSocketAddress(port); // создаем адрес сокета (IP-адрес и порт)
 
-        ServerSocketChannel channel = ServerSocketChannel.open(); // канал для сервера, который слушает порты и создает сокеты для клиентов
+        Runtime.getRuntime().addShutdownHook(new Thread(
+                ()-> {
+                    try {
+                        closeSocket();
+                        logger.info("Server finishes working");
+                        saveCollection();
+                    } catch (IOException e) {
+                        //do nothing;
+                    }
+                }
+        ));
+        openSocket();
         channel.bind(address); // теперь канал слушает по определенному сокету
         channel.configureBlocking(false); // неблокирующий режим
 

@@ -1,1 +1,3 @@
-execute_script scriptA.txt
+info
+reorder
+execute_script scriptB.txt
