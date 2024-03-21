@@ -1,5 +1,6 @@
 package server;
 
+import client.Request;
 import common.routeClasses.Route;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -78,7 +79,7 @@ public class Server {
         InetSocketAddress address = new InetSocketAddress(port); // создаем адрес сокета (IP-адрес и порт)
 
         Runtime.getRuntime().addShutdownHook(new Thread(
-                ()-> {
+                () -> {
                     try {
                         closeSocket();
                         logger.info("Server finishes working");
@@ -91,10 +92,12 @@ public class Server {
         openSocket();
         channel.bind(address); // теперь канал слушает по определенному сокету
         channel.configureBlocking(false); // неблокирующий режим
+        logger.info("Server is listening on port %s. Print \"save\" to save current collection".formatted(port));
 
         Selector selector = Selector.open();
         channel.register(selector, SelectionKey.OP_ACCEPT);
         startSavingTask(saveInterval);
+        handleSave();
 
         try {
             while (true) {
@@ -129,6 +132,7 @@ public class Server {
         }
         saveCollection();
     }
+
     // TODO: implement save command
     private void saveCollection() {
         try {
@@ -155,6 +159,25 @@ public class Server {
 
         // Schedule the save task to run every n seconds
         scheduler.scheduleAtFixedRate(saveTask, 0, intervalInSeconds, TimeUnit.SECONDS);
+    }
+
+    public void handleSave() {
+        Runnable task = () -> {
+            Scanner scanner = new Scanner(System.in);
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+
+                    String line = scanner.nextLine();
+                    if (line.equalsIgnoreCase("save")) {
+                        saveCollection();
+                    }
+                } catch (NoSuchElementException ignored) {
+
+                }
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }
 

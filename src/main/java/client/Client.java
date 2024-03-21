@@ -151,9 +151,8 @@ public class Client {
         // Receive response from the server
         ByteBuffer fromServer = ByteBuffer.allocate(4096);
         socketChannel.read(fromServer);
-        // TODO: check decoding
-        String response = new String(fromServer.array()).trim();
 
+        String response = new String(fromServer.array()).trim();
 
         // Display the response received from the server
         System.out.println(response);
