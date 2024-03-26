@@ -60,7 +60,7 @@ public class Server {
         this.manager = new CollectionManager(new Stack<Route>(), logger);
         this.executor = new CommandExecutionModule(manager);
         this.acceptConnectionModule = new AcceptConnectionModule();
-        this.requestReadModule = new RequestReadModule(executor);
+        this.requestReadModule = new RequestReadModule(executor, logger);
         this.sendResponseModule = new SendResponseModule();
     }
 
@@ -110,7 +110,6 @@ public class Server {
                     SelectionKey key = iter.next();
                     iter.remove();
                     try {
-
                         if (key.isAcceptable()) {
                             SocketChannel client = acceptConnectionModule.handleAccept(key);
                             logger.info("Connection accepted from " + client);
@@ -131,13 +130,14 @@ public class Server {
             logger.warn("Client is disconnected");
         }
         saveCollection();
+        selector.close();
     }
 
-    // TODO: implement save command
     private void saveCollection() {
         try {
             if (manager.getIsEmpty()) {
                 logger.info("Коллекция пуста, нечего сохранять.");
+                return;
             }
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
@@ -166,7 +166,6 @@ public class Server {
             Scanner scanner = new Scanner(System.in);
             while (!Thread.currentThread().isInterrupted()) {
                 try {
-
                     String line = scanner.nextLine();
                     if (line.equalsIgnoreCase("save")) {
                         saveCollection();

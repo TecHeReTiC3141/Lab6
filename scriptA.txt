@@ -8,4 +8,3 @@ remove_by_id 12
 show
 clear
 show
-execute_script scriptB.txt

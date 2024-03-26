@@ -39,7 +39,6 @@ public class CollectionManager {
      */
     private final Date initDate = new Date();
 
-    // TODO:  rewrite all methods to use Stream api
     private Stack<Route> collection;
 
     private final Logger logger;
@@ -257,7 +256,6 @@ public class CollectionManager {
      * Метод, выводящий элементы коллекции в порядке возрастания.
      */
 
-    // TODO: fix \n absence
     public String printAscendingCommand() {
         if (collection.isEmpty()) {
             return "Коллекция пуста";

@@ -168,3 +168,7 @@
 19:15:18.250 [main] INFO  server - Reading...
 19:15:18.250 [main] WARN  server - Client disconnected
 19:15:21.799 [Thread-1] INFO  server - РљРѕР»Р»РµРєС†РёСЏ СѓСЃРїРµС€РЅРѕ СЃРѕС…СЂР°РЅРµРЅР° РІ С„Р°Р№Р»
+19:16:16.822 [Thread-0] INFO  server - Server finishes working
+19:37:49.345 [main] INFO  server - Server is listening on port 1234. Print "save" to save current collection
+19:37:49.447 [pool-2-thread-1] INFO  server - Коллекция успешно сохранена в файл
+19:39:24.035 [Thread-0] INFO  server - Server finishes working

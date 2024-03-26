@@ -10,8 +10,11 @@ public class OneIntArgValidator extends BaseValidator {
             checkIfOneArgument(command, args);
             int firstArg = Integer.parseInt(args[0]);
             return super.validate(command, args);
-        } catch (WrongArgumentsException e) {
+        } catch (WrongArgumentsException  e) {
             System.out.println(e.getMessage());
+            return null;
+        } catch (NumberFormatException e) {
+            System.out.println("Аргумент должен быть целым числом");
             return null;
         }
     }

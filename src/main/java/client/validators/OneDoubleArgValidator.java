@@ -10,8 +10,11 @@ public class OneDoubleArgValidator extends BaseValidator {
             checkIfOneArgument(command, args);
             double firstArg = Double.parseDouble(args[0]);
             return super.validate(command, args);
-        } catch (WrongArgumentsException e) {
+        } catch (WrongArgumentsException  e) {
             System.out.println(e.getMessage());
+            return null;
+        } catch (NumberFormatException e) {
+            System.out.println("Аргумент должен быть целым числом");
             return null;
         }
     }

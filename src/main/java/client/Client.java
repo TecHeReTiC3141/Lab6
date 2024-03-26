@@ -40,7 +40,7 @@ public class Client {
                 put("print_ascending", new NoArgumentsValidator());
                 put("print_field_descending_distance", new NoArgumentsValidator());
                 put("exit", new ExitValidator());
-                put("execute_script", new ExecuteScriptValidator()); // TODO: implement validation of endless recursion
+                put("execute_script", new ExecuteScriptValidator());
             }
         };
     }
@@ -124,7 +124,6 @@ public class Client {
         }
     }
 
-    // TODO: fix recursion
     public void handleExecuteScript(Request request) {
         String filename = request.getArgs()[0];
         try (FileReader reader = new FileReader(filename)) {
