@@ -4,6 +4,7 @@ import client.consoles.FileConsole;
 import client.consoles.SystemInConsole;
 import client.validators.*;
 import common.exceptions.ExitException;
+import common.exceptions.LostConnectionException;
 import common.exceptions.UnknownCommandException;
 
 import java.io.ByteArrayOutputStream;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.AlreadyConnectedException;
 import java.nio.channels.SocketChannel;
 import java.util.*;
 
@@ -55,14 +57,30 @@ public class Client {
         }
     }
 
-
     private final int port = System.getenv("PORT") != null ? Integer.parseInt(System.getenv("PORT")) : 1234;
+
+    private void connectToServer() throws IOException {
+        while (!socketChannel.isConnected()) {
+            try {
+                System.out.println("Trying to connect to the server...");
+                socketChannel.connect(new InetSocketAddress("localhost", port));
+                System.out.println("Connected to the server.");
+            } catch (IOException e) {
+                System.err.println("Failed to connect to the server. Retrying...");
+                try {
+                    Thread.sleep(Math.round(5000 + Math.random() * 3000)); // Wait for 5 seconds before retrying
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
 
     public void run() {
 
         try {
             openSocket();
-            socketChannel.connect(new InetSocketAddress("localhost", port));
+            connectToServer();
             SystemInConsole sc = new SystemInConsole();
 
             System.out.println("Приветствую вас в программе для работы с коллекцией Route! Введите help для получения списка команд");
@@ -76,14 +94,15 @@ public class Client {
                 } catch (NoSuchElementException e) {
                     System.err.println("Достигнут конец ввода, завершение работы программы...");
                     System.exit(130);
+                } catch (LostConnectionException e) {
+                    System.err.println("Потеряно соединение с сервером, завершение работы программы...");
+                    System.exit(0);
                 }
             }
-
             closeSocket();
             System.out.println("Socket channel closed");
-        } catch (
-                IOException e) {
-            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Проблема с подключением к серверу: " + e.getMessage());
         }
 
     }
@@ -111,20 +130,17 @@ public class Client {
         return null;
     }
 
-    public void handleRequest(Request request) {
+    public void handleRequest(Request request) throws LostConnectionException, IOException {
         if (request == null) return;
-        try {
-            if (request.getCommand().equals("execute_script")) {
-                handleExecuteScript(request);
-            } else {
-                makeRequest(request);
-            }
-        } catch (IOException e) {
-            System.err.println("Ошибка при отправке запроса: " + e.getMessage());
+        if (request.getCommand().equals("execute_script")) {
+            handleExecuteScript(request);
+        } else {
+            makeRequest(request);
         }
+
     }
 
-    public void handleExecuteScript(Request request) {
+    public void handleExecuteScript(Request request) throws LostConnectionException {
         String filename = request.getArgs()[0];
         try (FileReader reader = new FileReader(filename)) {
             FileConsole console = new FileConsole(reader);
@@ -139,7 +155,7 @@ public class Client {
         }
     }
 
-    public void makeRequest(Request request) throws IOException {
+    public void makeRequest(Request request) throws IOException, LostConnectionException {
         ByteArrayOutputStream bais = new ByteArrayOutputStream();
         ObjectOutputStream toServer = new ObjectOutputStream(bais);
         toServer.writeObject(request);
@@ -149,12 +165,25 @@ public class Client {
 
         // Receive response from the server
         ByteBuffer fromServer = ByteBuffer.allocate(4096);
-        socketChannel.read(fromServer);
+        int bytesRead = socketChannel.read(fromServer);
+        if (bytesRead == -1) {
+            throw new LostConnectionException();
+        }
 
         String response = new String(fromServer.array()).trim();
 
         // Display the response received from the server
         System.out.println(response);
         System.out.println("-----------------------------------\n");
+    }
+
+    private void reconnectToServer() {
+        try {
+            closeSocket();
+            openSocket();
+            connectToServer();
+        } catch (IOException e) {
+            System.err.println("Failed to reconnect to the server: " + e.getMessage());
+        }
     }
 }
