@@ -15,6 +15,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
@@ -46,11 +47,15 @@ public class Server {
 
     private final SendResponseModule sendResponseModule;
 
+    private final DatabaseConnection databaseConnection;
+
     private final int port = System.getenv("PORT") != null ? Integer.parseInt(System.getenv("PORT")) : 1234;
 
     private static final Logger logger = LogManager.getLogger("server");
 
     private ServerSocketChannel channel;
+
+    String jdbcURL = "jdbc:postgresql://pg:5432/studs";
 
 
     /**
@@ -62,6 +67,25 @@ public class Server {
         this.acceptConnectionModule = new AcceptConnectionModule();
         this.requestReadModule = new RequestReadModule(executor, logger);
         this.sendResponseModule = new SendResponseModule();
+
+        String credentials = getUserCredentials();
+        String[] credentialsParts = credentials.split(" ");
+        this.databaseConnection = new DatabaseConnection(jdbcURL, credentialsParts[0], credentialsParts[1]);
+    }
+
+    public String getUserCredentials() {
+        try {
+            Scanner credentialsScanner = new Scanner(new FileReader("credentials.txt"));
+            String username = credentialsScanner.nextLine().trim();
+            String password = credentialsScanner.nextLine().trim();
+            return username + " " + password;
+        } catch (FileNotFoundException e) {
+            logger.error("File with credentials (credentials.txt) not found");
+        } catch (NoSuchElementException e) {
+            logger.error("Username or password not found in credentials.txt");
+        }
+        System.exit(-1);
+        return null;
     }
 
     public void openSocket() throws IOException {
@@ -136,7 +160,7 @@ public class Server {
     private void saveCollection() {
         try {
             if (manager.getIsEmpty()) {
-                logger.info("Коллекция пуста, нечего сохранять.");
+                logger.info("Коллекция пуста, нечего сохранять");
                 return;
             }
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();

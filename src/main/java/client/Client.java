@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.AlreadyConnectedException;
 import java.nio.channels.SocketChannel;
 import java.util.*;
 
@@ -95,8 +94,8 @@ public class Client {
                     System.err.println("Достигнут конец ввода, завершение работы программы...");
                     System.exit(130);
                 } catch (LostConnectionException e) {
-                    System.err.println("Потеряно соединение с сервером, завершение работы программы...");
-                    System.exit(0);
+                    System.err.println("Потеряно соединение с сервером, завершаем работу клиента...");
+                    System.exit(1);
                 }
             }
             closeSocket();
