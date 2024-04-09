@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
 
@@ -26,12 +27,12 @@ public class HelpCommand extends BaseCommand {
     /**
      * Main method.
      */
-    public String execute(String[] commandParts, Route route) {
+    public Response execute(String[] commandParts, Route route) {
         StringBuilder result = new StringBuilder();
         result.append("Список доступных команд:");
         for (BaseCommand command : commands) {
             result.append(command.getName() + ": " + command.getDescription() + '\n');
         }
-        return result.toString();
+        return new Response(result.toString(), true);
     }
 }

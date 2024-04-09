@@ -7,9 +7,9 @@ import java.security.NoSuchAlgorithmException;
 
 public class DataHasher {
 
-    public static String encryptStringMD2(String string) {
+    public static String encryptStringSHA224(String string) {
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-224");
+            MessageDigest md = MessageDigest.getInstance("SHA-384");
             byte[] digest = md.digest(string.getBytes(StandardCharsets.UTF_8));
             BigInteger numRepresentation = new BigInteger(1, digest);
             String hashedString = numRepresentation.toString(16);

@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
 
@@ -36,6 +37,12 @@ public abstract class BaseCommand implements ICommand {
         this.manager = manager;
     }
 
+    public BaseCommand(String name, String description) {
+        this.name = name;
+        this.description = description;
+        this.manager = null;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -49,8 +56,8 @@ public abstract class BaseCommand implements ICommand {
      *
      * @param commandParts массив, содержащий название и аргументы команды
      */
-    public String execute(String[] commandParts, Route route) {
-        return "";
+    public Response execute(String[] commandParts, Route route) {
+        return new Response();
     }
 
     /**
@@ -59,7 +66,7 @@ public abstract class BaseCommand implements ICommand {
      * @param commandParts массив, содержащий название и аргументы команды
      * @param parse флаг, указывающий, нужно ли парсить аргументы команды
      */
-    public String execute(String[] commandParts, Route route, boolean parse) {
-        return "";
+    public Response execute(String[] commandParts, Route route, boolean parse) {
+        return new Response();
     }
 }

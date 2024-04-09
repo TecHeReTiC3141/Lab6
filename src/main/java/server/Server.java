@@ -1,6 +1,5 @@
 package server;
 
-import client.Request;
 import common.routeClasses.Route;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,7 +8,6 @@ import org.w3c.dom.Element;
 import server.serverModules.AcceptConnectionModule;
 import server.serverModules.CommandExecutionModule;
 import server.serverModules.RequestReadModule;
-import server.serverModules.SendResponseModule;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -18,11 +16,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -43,19 +40,17 @@ public class Server {
 
     private final AcceptConnectionModule acceptConnectionModule;
 
-    private final RequestReadModule requestReadModule;
-
-    private final SendResponseModule sendResponseModule;
-
-    private final DatabaseConnection databaseConnection;
+    private final DatabaseManager databaseManager;
 
     private final int port = System.getenv("PORT") != null ? Integer.parseInt(System.getenv("PORT")) : 1234;
 
     private static final Logger logger = LogManager.getLogger("server");
 
-    private ServerSocketChannel channel;
+    private ServerSocket socket;
 
-    String jdbcURL = "jdbc:postgresql://pg:5432/studs";
+    private final ExecutorService fixedThreadPool = Executors.newFixedThreadPool(16);
+
+    String jdbcURL = "jdbc:postgresql://localhost:5488/studs";
 
 
     /**
@@ -64,13 +59,11 @@ public class Server {
     public Server() {
         this.manager = new CollectionManager(new Stack<Route>(), logger);
         this.executor = new CommandExecutionModule(manager);
-        this.acceptConnectionModule = new AcceptConnectionModule();
-        this.requestReadModule = new RequestReadModule(executor, logger);
-        this.sendResponseModule = new SendResponseModule();
+        this.acceptConnectionModule = new AcceptConnectionModule(socket);
 
         String credentials = getUserCredentials();
         String[] credentialsParts = credentials.split(" ");
-        this.databaseConnection = new DatabaseConnection(jdbcURL, credentialsParts[0], credentialsParts[1]);
+        this.databaseManager = new DatabaseManager(jdbcURL, credentialsParts[0], credentialsParts[1]);
     }
 
     public String getUserCredentials() {
@@ -89,12 +82,12 @@ public class Server {
     }
 
     public void openSocket() throws IOException {
-        channel = ServerSocketChannel.open();
+        socket = new ServerSocket(port);
     }
 
     public void closeSocket() throws IOException {
-        if (channel != null && channel.isOpen()) {
-            channel.close();
+        if (socket != null && !socket.isClosed()) {
+            socket.close();
         }
     }
 
@@ -114,47 +107,14 @@ public class Server {
                 }
         ));
         openSocket();
-        channel.bind(address); // теперь канал слушает по определенному сокету
-        channel.configureBlocking(false); // неблокирующий режим
         logger.info("Server is listening on port %s. Print \"save\" to save current collection".formatted(port));
-
-        Selector selector = Selector.open();
-        channel.register(selector, SelectionKey.OP_ACCEPT);
         startSavingTask(saveInterval);
         handleSave();
 
-        try {
-            while (true) {
-                selector.select(); // количество ключей, чьи каналы готовы к операции. БЛОКИРУЕТ, ПОКА НЕ БУДЕТ КЛЮЧЕЙ
-                Set<SelectionKey> selectedKeys = selector.selectedKeys(); // получаем список ключей от каналов, готовых к работеwhile (iter.hasNext()) {
-                Iterator<SelectionKey> iter = selectedKeys.iterator(); // получаем итератор ключей
-
-                while (iter.hasNext()) {
-
-                    SelectionKey key = iter.next();
-                    iter.remove();
-                    try {
-                        if (key.isAcceptable()) {
-                            SocketChannel client = acceptConnectionModule.handleAccept(key);
-                            logger.info("Connection accepted from " + client);
-                        } else if (key.isReadable()) {
-                            logger.info("Reading...");
-                            requestReadModule.handleRead(key);
-                        } else if (key.isWritable()) {
-                            logger.info("Writing...");
-                            sendResponseModule.handleWrite(key);
-                        }
-                    } catch (IOException e) {
-                        logger.warn("Client disconnected");
-                        key.cancel();
-                    }
-                }
-            }
-        } catch (IOException e) {
-            logger.warn("Client is disconnected");
+        while (true) {
+            Socket client = acceptConnectionModule.handleAccept();
+            fixedThreadPool.submit(new RequestReadModule(client, executor, logger));
         }
-        saveCollection();
-        selector.close();
     }
 
     private void saveCollection() {
@@ -174,6 +134,7 @@ public class Server {
         } catch (ParserConfigurationException e) {
             logger.error("Ошибка при сохранение");
         }
+
     }
 
     public void startSavingTask(int intervalInSeconds) {

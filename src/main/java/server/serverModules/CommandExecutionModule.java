@@ -1,5 +1,6 @@
 package server.serverModules;
 
+import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
 import server.commands.*;
@@ -49,7 +50,7 @@ public class CommandExecutionModule {
      * @return true, если команда была успешно обработана, иначе false
      */
 
-    public String processCommand(String commandName, String[] args, Route route) {
+    public Response processCommand(String commandName, String[] args, Route route) {
         BaseCommand command = commands.get(commandName);
         return command.execute(args, route);
     }

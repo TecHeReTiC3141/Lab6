@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
 
@@ -19,7 +20,7 @@ public class ShowCommand extends BaseCommand {
      * @param commandParts название и аргументы команды
      */
 
-    public String execute(String[] commandParts, Route route) {
-        return manager.showCollection();
+    public Response execute(String[] commandParts, Route route) {
+        return new Response(manager.showCollection());
     }
 }

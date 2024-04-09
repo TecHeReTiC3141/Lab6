@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
 
@@ -18,12 +19,12 @@ public class CountGreaterThanDistanceCommand extends BaseCommand {
      * @param commandParts массив, содержащий название и аргументы команды
      */
 
-    public String execute(String[] commandParts, Route route) {
+    public Response execute(String[] commandParts, Route route) {
         if (manager.getIsEmpty()) {
-            return "Коллекция пуста";
+            return new Response("Коллекция пуста", false);
         }
         double distance = Double.parseDouble(commandParts[0]);
         long count = manager.countGreaterThanDistance(distance);
-        return "Количество элементов, значение поля distance которых больше %s - %s%n".formatted(distance, count);
+        return new Response("Количество элементов, значение поля distance которых больше %s - %s%n".formatted(distance, count));
     }
 }

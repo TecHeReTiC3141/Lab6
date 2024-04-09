@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
 
@@ -19,8 +20,8 @@ public class ClearCommand extends BaseCommand {
      * @param commandParts массив, содержащий название и аргументы команды
      */
 
-    public String execute(String[] commandParts, Route route) {
+    public Response execute(String[] commandParts, Route route) {
         manager.clearCollection();
-        return "Коллекция очищена";
+        return new Response("Коллекция очищена");
     }
 }

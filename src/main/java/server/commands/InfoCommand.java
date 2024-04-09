@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
 
@@ -19,9 +20,11 @@ public class InfoCommand extends BaseCommand {
      *
      * @param commandParts название и аргументы команды
      */
-    public String execute(String[] commandParts, Route route) {
-        return "Тип коллекции: " + manager.getCollectionClassName() + "\n" +
-                "Дата инициализации: " + manager.getInitDate() + "\n" +
-                "Количество элементов: " + manager.getCollectionSize();
+    public Response execute(String[] commandParts, Route route) {
+        return new Response(
+                "Тип коллекции: " + manager.getCollectionClassName() + "\n" +
+                        "Дата инициализации: " + manager.getInitDate() + "\n" +
+                        "Количество элементов: " + manager.getCollectionSize()
+        );
     }
 }

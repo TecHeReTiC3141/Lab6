@@ -1,6 +1,6 @@
 package client.validators;
 
-import client.Request;
+import common.Request;
 import common.RouteDataValidator;
 import common.exceptions.*;
 import common.routeClasses.Coordinates;

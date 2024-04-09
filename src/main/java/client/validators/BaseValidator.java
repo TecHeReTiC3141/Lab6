@@ -1,6 +1,6 @@
 package client.validators;
 
-import client.Request;
+import common.Request;
 import common.exceptions.InvalidDistanceException;
 import common.exceptions.InvalidNameException;
 import common.exceptions.UnknownCommandException;

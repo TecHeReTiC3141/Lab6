@@ -1,46 +1,57 @@
 package server.serverModules;
 
-import client.Request;
+import common.Request;
+import common.Response;
 import org.apache.logging.log4j.Logger;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.StreamCorruptedException;
+import java.io.*;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class RequestReadModule {
+public class RequestReadModule implements Runnable {
+
+    private final Socket clientSocket;
 
     private final CommandExecutionModule executor;
     private final Logger logger;
 
-    public RequestReadModule(CommandExecutionModule executor, Logger logger) {
+    private final ExecutorService fixedThreadPool = Executors.newFixedThreadPool(16);
+
+    public RequestReadModule(Socket clientSocket, CommandExecutionModule executor, Logger logger) {
+        this.clientSocket = clientSocket;
         this.executor = executor;
         this.logger = logger;
     }
 
-    public void handleRead(SelectionKey key) throws IOException, ClassNotFoundException {
-        SocketChannel client = (SocketChannel) key.channel(); // получаем канал для работы
-        client.configureBlocking(false); // неблокирующий режим
-
-        ByteBuffer fromClientBuffer = (ByteBuffer) key.attachment();
-        client.read(fromClientBuffer);
+    public void run() {
+        Request request;
+        Response response;
         try {
 
-            ObjectInputStream fromClient = new ObjectInputStream(new ByteArrayInputStream(fromClientBuffer.array()));
+            ObjectInputStream fromClient = new ObjectInputStream(clientSocket.getInputStream());
+            ObjectOutputStream toClient = new ObjectOutputStream(clientSocket.getOutputStream());
 
-            Request request = (Request) fromClient.readObject();
-            fromClientBuffer.clear();
+            request = (Request) fromClient.readObject();
             System.out.println(request);
-            byte[] response = executor.processCommand(request.getCommand(), request.getArgs(), request.getRoute()).getBytes(StandardCharsets.UTF_8);
-            ByteBuffer responseBuffer = ByteBuffer.wrap(response);
-            client.register(key.selector(), SelectionKey.OP_WRITE, responseBuffer);
-        } catch (StreamCorruptedException e) {
+            response = executor.processCommand(request.getCommand(), request.getArgs(), request.getRoute());
+            Response responseToSend = response;
+            fixedThreadPool.submit(() -> {
+                try {
+                    toClient.writeObject(responseToSend);
+                    toClient.flush();
+                } catch (IOException e) {
+                    logger.error("Error sending response to client", e);
+                }
+            });
+        } catch (IOException e) {
             logger.info("Client disconnected");
-            key.cancel();
+        } catch (ClassNotFoundException e) {
+            logger.error("Error reading request from client", e);
         }
     }
 

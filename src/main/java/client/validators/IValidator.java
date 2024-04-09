@@ -1,6 +1,6 @@
 package client.validators;
 
-import client.Request;
+import common.Request;
 
 public interface IValidator {
 

@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
 
@@ -25,9 +26,8 @@ public class ExitCommand extends BaseCommand {
      * Метод, реализующий логику команды exit
      * @param commandParts название команды и ее аргументы
      */
-    public String execute(String[] commandParts, Route route) {
-
-        return "Client exited";
+    public Response execute(String[] commandParts, Route route) {
+        return new Response("Завершение работы программы");
     }
 
 }

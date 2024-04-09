@@ -23,6 +23,8 @@ public class Route implements Comparable<Route>, Serializable {
     private LocationTo to; //Поле может быть null
     private double distance; //Поле не может быть null, Значение поля должно быть больше 1
 
+    private int creatorId; // Поле не может быть null
+
     private transient DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy/MM/dd-HH:mm:ss");
 
 
@@ -43,13 +45,14 @@ public class Route implements Comparable<Route>, Serializable {
      * @param to           the to
      * @param distance     the distance
      */
-    public Route(String name, ZonedDateTime creationDate, Coordinates coordinates, LocationFrom from, LocationTo to, double distance) {
+    public Route(String name, ZonedDateTime creationDate, Coordinates coordinates, LocationFrom from, LocationTo to, double distance, int creatorId) {
         this.name = name;
         this.creationDate = creationDate;
         this.coordinates = coordinates;
         this.from = from;
         this.to = to;
         this.distance = distance;
+        this.creatorId = creatorId;
     }
 
     /**
@@ -171,6 +174,14 @@ public class Route implements Comparable<Route>, Serializable {
      */
     public void setDistance(double distance) {
         this.distance = distance;
+    }
+
+    public void setCreatorId(int creatorId) {
+        this.creatorId = creatorId;
+    }
+
+    public int getCreatorId() {
+        return creatorId;
     }
 
     /**

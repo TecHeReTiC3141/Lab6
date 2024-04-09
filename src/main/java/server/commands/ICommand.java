@@ -1,6 +1,7 @@
 package server.commands;
 
 
+import common.Response;
 import common.routeClasses.Route;
 
 /**
@@ -27,7 +28,7 @@ public interface ICommand {
      *
      * @param commandParts массив, содержащий название и аргументы команды
      */
-    String execute(String[] commandParts, Route route);
+    Response execute(String[] commandParts, Route route);
 
     /**
      * Метод, в котором выполняется логика команды, при этом нужно обработать передаваемые значения.
@@ -35,5 +36,5 @@ public interface ICommand {
      * @param commandParts массив, содержащий название и аргументы команды
      * @param parse флаг, указывающий, нужно ли парсить аргументы команды
      */
-    String execute(String[] commandParts, Route route, boolean parse);
+    Response execute(String[] commandParts, Route route, boolean parse);
 }

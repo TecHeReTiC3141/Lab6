@@ -1,6 +1,6 @@
 package client.validators;
 
-import client.Request;
+import common.Request;
 import client.consoles.FileConsole;
 import common.exceptions.WrongArgumentsException;
 

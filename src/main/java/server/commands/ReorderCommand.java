@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
 
@@ -20,8 +21,8 @@ public class ReorderCommand extends BaseCommand {
      * @param commandParts массив, содержащий название и аргументы команды
      */
 
-    public String execute(String[] commandParts, Route route) {
+    public Response execute(String[] commandParts, Route route) {
         manager.reorder();
-        return "Порядок элементов коллекции изменен на обратный";
+        return new Response("Порядок элементов коллекции изменен на обратный");
     }
 }

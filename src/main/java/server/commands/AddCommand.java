@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
 
@@ -20,8 +21,8 @@ public class AddCommand extends BaseCommand {
      * @param commandParts массив, содержащий название аргументы команды
      */
 
-    public String execute(String[] commandParts, Route route) {
-        return manager.putToCollection(route, false);
+    public Response execute(String[] commandParts, Route route) {
+        return new Response(manager.putToCollection(route, false));
     }
 
 }

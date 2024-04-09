@@ -1,6 +1,6 @@
 package client.validators;
 
-import client.Request;
+import common.Request;
 import common.exceptions.ExitException;
 
 public class ExitValidator extends BaseValidator {

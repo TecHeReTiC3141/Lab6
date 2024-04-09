@@ -172,3 +172,12 @@
 19:37:49.345 [main] INFO  server - Server is listening on port 1234. Print "save" to save current collection
 19:37:49.447 [pool-2-thread-1] INFO  server - ��������� ������� ��������� � ����
 19:39:24.035 [Thread-0] INFO  server - Server finishes working
+12:45:59.616 [main] ERROR server - Не найдена переменная окружения DATA_FILE
+12:46:45.206 [main] INFO  server - Server is listening on port 1234. Print "save" to save current collection
+12:46:45.271 [pool-2-thread-1] INFO  server - Коллекция успешно сохранена в файл
+12:51:45.234 [pool-2-thread-1] INFO  server - Коллекция успешно сохранена в файл
+12:56:45.227 [pool-2-thread-1] INFO  server - Коллекция успешно сохранена в файл
+13:01:45.223 [pool-2-thread-1] INFO  server - Коллекция успешно сохранена в файл
+13:06:45.225 [pool-2-thread-1] INFO  server - Коллекция успешно сохранена в файл
+13:11:45.218 [pool-2-thread-1] INFO  server - Коллекция успешно сохранена в файл
+13:12:19.473 [Thread-0] INFO  server - Server finishes working

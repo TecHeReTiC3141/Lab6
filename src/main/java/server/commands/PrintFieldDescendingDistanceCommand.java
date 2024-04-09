@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
 
@@ -20,8 +21,8 @@ public class PrintFieldDescendingDistanceCommand extends BaseCommand {
      * @param commandParts массив, содержащий название и аргументы команды
      */
 
-    public String execute(String[] commandParts, Route route) {
+    public Response execute(String[] commandParts, Route route) {
 
-        return manager.printDescendingDistance();
+        return new Response(manager.printDescendingDistance());
     }
 }

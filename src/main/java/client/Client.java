@@ -3,15 +3,14 @@ package client;
 import client.consoles.FileConsole;
 import client.consoles.SystemInConsole;
 import client.validators.*;
+import common.Request;
 import common.exceptions.ExitException;
 import common.exceptions.LostConnectionException;
 import common.exceptions.UnknownCommandException;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.*;
@@ -20,9 +19,19 @@ public class Client {
 
     private final Map<String, BaseValidator> validators;
 
-    private SocketChannel socketChannel;
+    private final static int RECONNECTION_TIMEOUT_IN_SECONDS = 5;
+    private final static int MAX_RECONNECTION_ATTEMPTS = 5;
 
+    private Socket socket;
+    private ObjectInputStream fromServer;
+    private ObjectOutputStream toServer;
     private int depth = 0;
+
+    private int username;
+
+    private boolean isLoggedIn = false;
+
+    private final int port = System.getenv("PORT") != null ? Integer.parseInt(System.getenv("PORT")) : 1234;
 
     public Client() {
         validators = new HashMap<>() {
@@ -42,35 +51,69 @@ public class Client {
                 put("print_field_descending_distance", new NoArgumentsValidator());
                 put("exit", new ExitValidator());
                 put("execute_script", new ExecuteScriptValidator());
+                put("register", new AuthValidator());
+                put("login", new AuthValidator());
             }
         };
     }
 
-    public void openSocket() throws IOException {
-        socketChannel = SocketChannel.open();
-    }
 
-    public void closeSocket() throws IOException {
-        if (socketChannel != null && socketChannel.isOpen()) {
-            socketChannel.close();
-        }
-    }
-
-    private final int port = System.getenv("PORT") != null ? Integer.parseInt(System.getenv("PORT")) : 1234;
-
-    private void connectToServer() throws IOException {
-        while (!socketChannel.isConnected()) {
+    private boolean connectToServer() throws IOException {
+        int reconnectionAttempt = 0;
+        do {
             try {
-                System.out.println("Trying to connect to the server...");
-                socketChannel.connect(new InetSocketAddress("localhost", port));
-                System.out.println("Connected to the server.");
-            } catch (IOException e) {
-                System.err.println("Failed to connect to the server. Retrying...");
-                try {
-                    Thread.sleep(Math.round(5000 + Math.random() * 3000)); // Wait for 5 seconds before retrying
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
+                if (reconnectionAttempt > 0) {
+                    Thread.sleep(RECONNECTION_TIMEOUT_IN_SECONDS * 1000);
+                    System.out.printf("Пытаюсь переподключиться (попытка %d)\n", reconnectionAttempt);
                 }
+                socket = new Socket("localhost", port);
+                toServer = new ObjectOutputStream(socket.getOutputStream());
+                fromServer = new ObjectInputStream(socket.getInputStream());
+                System.out.println("Соединение установлено.");
+                reconnectionAttempt = 0;
+                return true;
+            } catch (IOException e) {
+                System.out.println("Ошибка подключения.");
+                reconnectionAttempt++;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } while (reconnectionAttempt <= MAX_RECONNECTION_ATTEMPTS);
+        return false;
+    }
+
+    public void authorizeUser() {
+        while (true) {
+            System.out.println("To register a new user, type 'register'. To authorize, type 'authorize'. To exit, type 'exit'.");
+            String input = new SystemInConsole().getLine().trim().toLowerCase();
+            if (input.equals("exit")) {
+                System.out.println("Exiting...");
+                System.exit(0);
+            }
+            if (input.equals("register")) {
+                System.out.println("Enter your username:");
+                String username = new SystemInConsole().getLine();
+                System.out.println("Enter your password:");
+                String password = new SystemInConsole().getLine();
+                Request request = new Request("register", new String[]{username, password}, null);
+                try {
+                    makeRequest(request); // Make separate method for authorization
+                } catch (IOException | LostConnectionException e) {
+                    System.err.println("Failed to register user: " + e.getMessage());
+                }
+            } else if (input.equals("authorize")) {
+                System.out.println("Enter your username:");
+                String username = new SystemInConsole().getLine();
+                System.out.println("Enter your password:");
+                String password = new SystemInConsole().getLine();
+                Request request = new Request("authorize", new String[]{username, password}, null);
+                try {
+                    makeRequest(request); // Make separate method for authorization
+                } catch (IOException | LostConnectionException e) {
+                    System.err.println("Failed to authorize user: " + e.getMessage() + ". Check your credentials");
+                }
+            } else {
+                System.out.println("Invalid input. Please try again.");
             }
         }
     }
@@ -78,11 +121,11 @@ public class Client {
     public void run() {
 
         try {
-            openSocket();
             connectToServer();
             SystemInConsole sc = new SystemInConsole();
 
-            System.out.println("Приветствую вас в программе для работы с коллекцией Route! Введите help для получения списка команд");
+            System.out.println("Приветствую вас в программе для работы с коллекцией Route! Для дальнейшей работы введите логин и пароль");
+            authorizeUser();
             while (true) {
                 try {
                     Request request = lineToRequest(sc.getLine());
@@ -98,7 +141,6 @@ public class Client {
                     System.exit(1);
                 }
             }
-            closeSocket();
             System.out.println("Socket channel closed");
         } catch (IOException e) {
             System.out.println("Проблема с подключением к серверу: " + e.getMessage());
@@ -154,35 +196,13 @@ public class Client {
         }
     }
 
+
+
     public void makeRequest(Request request) throws IOException, LostConnectionException {
-        ByteArrayOutputStream bais = new ByteArrayOutputStream();
-        ObjectOutputStream toServer = new ObjectOutputStream(bais);
-        toServer.writeObject(request);
 
-        socketChannel.write(ByteBuffer.wrap(bais.toByteArray()));
-
-
-        // Receive response from the server
-        ByteBuffer fromServer = ByteBuffer.allocate(4096);
-        int bytesRead = socketChannel.read(fromServer);
-        if (bytesRead == -1) {
-            throw new LostConnectionException();
-        }
-
-        String response = new String(fromServer.array()).trim();
 
         // Display the response received from the server
         System.out.println(response);
         System.out.println("-----------------------------------\n");
-    }
-
-    private void reconnectToServer() {
-        try {
-            closeSocket();
-            openSocket();
-            connectToServer();
-        } catch (IOException e) {
-            System.err.println("Failed to reconnect to the server: " + e.getMessage());
-        }
     }
 }
