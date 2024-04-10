@@ -3,6 +3,7 @@ package server.commands;
 import common.Request;
 import common.Response;
 import server.CollectionManager;
+import server.DatabaseManager;
 
 /**
  * Класс, реализующий команду execute_script, считывающую и исполняющую скрипт из указанного файла
@@ -10,8 +11,8 @@ import server.CollectionManager;
 
 public class ExecuteScriptCommand extends BaseCommand {
 
-    public ExecuteScriptCommand(String name, String description, CollectionManager manager) {
-        super(name, description, manager);
+    public ExecuteScriptCommand(String name, String description, CollectionManager manager, DatabaseManager databaseManager) {
+        super(name, description, manager, databaseManager);
     }
 
     /**

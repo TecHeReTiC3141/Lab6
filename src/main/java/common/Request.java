@@ -41,7 +41,7 @@ public class Request implements Serializable {
         return username != null;
     }
 
-    public String toString() { // TODO: turn it into a formatted string
+    public String toString() {
         return "Request{command='%s', args=%s, route=%s, from=%s}"
                 .formatted(command, Arrays.toString(args), route, username);
     }

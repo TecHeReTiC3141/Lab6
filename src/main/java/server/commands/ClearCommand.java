@@ -2,8 +2,8 @@ package server.commands;
 
 import common.Request;
 import common.Response;
-import common.routeClasses.Route;
 import server.CollectionManager;
+import server.DatabaseManager;
 
 /**
  * Класс, реализующий команду clear, очищающую коллекцию.
@@ -11,8 +11,8 @@ import server.CollectionManager;
 
 public class ClearCommand extends BaseCommand {
 
-    public ClearCommand(String name, String description, CollectionManager manager) {
-        super(name, description, manager);
+    public ClearCommand(String name, String description, CollectionManager manager, DatabaseManager databaseManager) {
+        super(name, description, manager, databaseManager);
     }
 
     /**
@@ -22,7 +22,7 @@ public class ClearCommand extends BaseCommand {
      */
 
     public Response execute(Request request) {
-        manager.clearCollection();
+        collectionManager.clearCollection();
         return new Response("Коллекция очищена");
     }
 }

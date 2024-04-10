@@ -2,8 +2,8 @@ package server.commands;
 
 import common.Request;
 import common.Response;
-import common.routeClasses.Route;
 import server.CollectionManager;
+import server.DatabaseManager;
 
 /**
  * Класс, реализующий команду print_field_descending_distance,
@@ -12,8 +12,8 @@ import server.CollectionManager;
 
 public class PrintFieldDescendingDistanceCommand extends BaseCommand {
 
-    public PrintFieldDescendingDistanceCommand(String name, String description, CollectionManager manager) {
-        super(name, description, manager);
+    public PrintFieldDescendingDistanceCommand(String name, String description, CollectionManager manager, DatabaseManager databaseManager) {
+        super(name, description, manager, databaseManager);
     }
 
     /**
@@ -24,6 +24,6 @@ public class PrintFieldDescendingDistanceCommand extends BaseCommand {
      */
 
     public Response execute(Request request) {
-        return new Response(manager.printDescendingDistance());
+        return new Response(collectionManager.printDescendingDistance());
     }
 }

@@ -4,6 +4,7 @@ import common.Request;
 import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
+import server.DatabaseManager;
 
 /**
  * Класс команды exit, завершающей программу.
@@ -19,8 +20,8 @@ public class ExitCommand extends BaseCommand {
      * @param description описание команды
      * @param manager   менеджер коллекции
      */
-    public ExitCommand(String name, String description, CollectionManager manager) {
-        super(name, description, manager);
+    public ExitCommand(String name, String description, CollectionManager manager, DatabaseManager databaseManager) {
+        super(name, description, manager, databaseManager);
     }
 
     /**

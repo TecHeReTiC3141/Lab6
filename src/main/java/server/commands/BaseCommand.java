@@ -3,6 +3,7 @@ package server.commands;
 import common.Request;
 import common.Response;
 import server.CollectionManager;
+import server.DatabaseManager;
 
 /**
  * Абстрактный класс, реализующий интерфейс ICommand.
@@ -21,7 +22,8 @@ public abstract class BaseCommand implements ICommand {
     /**
      * The Collection.
      */
-    protected CollectionManager manager;
+    protected CollectionManager collectionManager;
+    protected DatabaseManager databaseManager;
 
     protected final boolean needsAuthed = false;
 
@@ -31,18 +33,19 @@ public abstract class BaseCommand implements ICommand {
      *
      * @param name        название команды
      * @param description описание команды
-     * @param manager   менеджер коллекции
+     * @param collectionManager   менеджер коллекции
      */
-    public BaseCommand(String name, String description, CollectionManager manager) {
+    public BaseCommand(String name, String description, CollectionManager collectionManager, DatabaseManager databaseManager) {
         this.name = name;
         this.description = description;
-        this.manager = manager;
+        this.collectionManager = collectionManager;
+        this.databaseManager = databaseManager;
     }
 
     public BaseCommand(String name, String description) {
         this.name = name;
         this.description = description;
-        this.manager = null;
+        this.collectionManager = null;
     }
 
     public String getDescription() {

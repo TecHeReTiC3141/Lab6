@@ -54,12 +54,13 @@ public class Server {
      * Конструктор приложения
      */
     public Server() {
-        this.manager = new CollectionManager(new Stack<Route>(), logger);
-        this.executor = new CommandExecutionModule(manager);
-
         String credentials = getUserCredentials();
         String[] credentialsParts = credentials.split(" ");
         this.databaseManager = new DatabaseManager(jdbcURL, credentialsParts[0], credentialsParts[1]);
+
+        this.manager = new CollectionManager(new Stack<Route>(), logger);
+        this.executor = new CommandExecutionModule(manager, databaseManager);
+
     }
 
     public String getUserCredentials() {

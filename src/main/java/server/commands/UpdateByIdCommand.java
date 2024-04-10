@@ -2,8 +2,8 @@ package server.commands;
 
 import common.Request;
 import common.Response;
-import common.routeClasses.Route;
 import server.CollectionManager;
+import server.DatabaseManager;
 
 /**
  * Класс, объекты которого обновляют элемент коллекции по его id, заменяя его другим элементом.
@@ -11,8 +11,8 @@ import server.CollectionManager;
 
 public class UpdateByIdCommand extends BaseCommand {
 
-    public UpdateByIdCommand(String name, String description, CollectionManager manager) {
-        super(name, description, manager);
+    public UpdateByIdCommand(String name, String description, CollectionManager manager, DatabaseManager databaseManager) {
+        super(name, description, manager, databaseManager);
     }
 
     /**
@@ -22,12 +22,12 @@ public class UpdateByIdCommand extends BaseCommand {
      */
     public Response execute(Request request) {
         long id = Long.parseLong(request.getArgs()[0]);
-        boolean isFound = manager.findElementById(id);
+        boolean isFound = collectionManager.findElementById(id);
         if (!isFound) {
             return new Response("Элемент с id " + id + " не найден. Обновление не выполнено.");
         }
         request.getRoute().setId(id);
-        return new Response(manager.updateElementById(id, request.getRoute()));
+        return new Response(collectionManager.updateElementById(id, request.getRoute()));
 
     }
 }

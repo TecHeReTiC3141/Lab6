@@ -2,8 +2,8 @@ package server.commands;
 
 import common.Request;
 import common.Response;
-import common.routeClasses.Route;
 import server.CollectionManager;
+import server.DatabaseManager;
 
 /**
  * Класс, реализующий команду show, которая выводит содержимое коллекции.
@@ -11,8 +11,8 @@ import server.CollectionManager;
 
 public class ShowCommand extends BaseCommand {
 
-    public ShowCommand(String name, String description, CollectionManager manager) {
-        super(name, description, manager);
+    public ShowCommand(String name, String description, CollectionManager manager, DatabaseManager databaseManager) {
+        super(name, description, manager, databaseManager);
     }
 
     /**
@@ -22,6 +22,6 @@ public class ShowCommand extends BaseCommand {
      */
 
     public Response execute(Request request) {
-        return new Response(manager.showCollection());
+        return new Response(collectionManager.showCollection());
     }
 }

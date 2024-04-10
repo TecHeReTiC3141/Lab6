@@ -2,8 +2,8 @@ package server.commands;
 
 import common.Request;
 import common.Response;
-import common.routeClasses.Route;
 import server.CollectionManager;
+import server.DatabaseManager;
 
 /**
  * Класс, реализующий команду info, выводящую информацию о коллекции (тип, дата инициализации, количество элементов).
@@ -12,8 +12,8 @@ import server.CollectionManager;
 public class InfoCommand extends BaseCommand {
 
 
-    public InfoCommand(String name, String description, CollectionManager manager) {
-        super(name, description, manager);
+    public InfoCommand(String name, String description, CollectionManager manager, DatabaseManager databaseManager) {
+        super(name, description, manager, databaseManager);
     }
 
     /**
@@ -24,9 +24,9 @@ public class InfoCommand extends BaseCommand {
      */
     public Response execute(Request request) {
         return new Response(
-                "Тип коллекции: " + manager.getCollectionClassName() + "\n" +
-                        "Дата инициализации: " + manager.getInitDate() + "\n" +
-                        "Количество элементов: " + manager.getCollectionSize()
+                "Тип коллекции: " + collectionManager.getCollectionClassName() + "\n" +
+                        "Дата инициализации: " + collectionManager.getInitDate() + "\n" +
+                        "Количество элементов: " + collectionManager.getCollectionSize()
         );
     }
 }

@@ -4,6 +4,7 @@ import common.Request;
 import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
+import server.DatabaseManager;
 
 import java.util.ArrayList;
 
@@ -17,8 +18,8 @@ public class HelpCommand extends BaseCommand {
      */
     ArrayList<BaseCommand> commands = new ArrayList<>();
 
-    public HelpCommand(String name, String description, CollectionManager manager) {
-        super(name, description, manager);
+    public HelpCommand(String name, String description, CollectionManager manager, DatabaseManager databaseManager) {
+        super(name, description, manager, databaseManager);
     }
 
     public void setCommands(ArrayList<BaseCommand> commands) {

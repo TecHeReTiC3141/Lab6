@@ -2,8 +2,8 @@ package server.commands;
 
 import common.Request;
 import common.Response;
-import common.routeClasses.Route;
 import server.CollectionManager;
+import server.DatabaseManager;
 
 /**
  * Класс, предоставляющий метод для добавления элемента в коллекцию.
@@ -12,8 +12,8 @@ import server.CollectionManager;
 public class AddCommand extends BaseCommand {
 
 
-    public AddCommand(String name, String description, CollectionManager manager) {
-        super(name, description, manager);
+    public AddCommand(String name, String description, CollectionManager manager, DatabaseManager databaseManager) {
+        super(name, description, manager, databaseManager);
     }
 
     /**
@@ -23,7 +23,7 @@ public class AddCommand extends BaseCommand {
      */
 
     public Response execute(Request request) {
-        return new Response(manager.putToCollection(request.getRoute(), false));
+        return new Response(collectionManager.putToCollection(request.getRoute(), false));
     }
 
 }
