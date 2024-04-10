@@ -1,6 +1,7 @@
 package server.commands;
 
 
+import common.Request;
 import common.Response;
 import common.routeClasses.Route;
 
@@ -26,15 +27,8 @@ public interface ICommand {
     /**
      * Метод, в котором выполняется логика команды.
      *
-     * @param commandParts массив, содержащий название и аргументы команды
+     * @param request - объект класса Request
      */
-    Response execute(String[] commandParts, Route route);
+    Response execute(Request request);
 
-    /**
-     * Метод, в котором выполняется логика команды, при этом нужно обработать передаваемые значения.
-     *
-     * @param commandParts массив, содержащий название и аргументы команды
-     * @param parse флаг, указывающий, нужно ли парсить аргументы команды
-     */
-    Response execute(String[] commandParts, Route route, boolean parse);
 }

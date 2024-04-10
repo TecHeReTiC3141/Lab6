@@ -181,3 +181,29 @@
 13:06:45.225 [pool-2-thread-1] INFO  server - Коллекция успешно сохранена в файл
 13:11:45.218 [pool-2-thread-1] INFO  server - Коллекция успешно сохранена в файл
 13:12:19.473 [Thread-0] INFO  server - Server finishes working
+18:06:04.435 [main] INFO  server - Server is listening on port 1234. Print "save" to save current collection
+18:06:04.504 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+18:08:34.134 [Thread-0] INFO  server - Server finishes working
+18:08:42.751 [main] INFO  server - Server is listening on port 1234. Print "save" to save current collection
+18:08:42.791 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+18:12:49.771 [Thread-0] INFO  server - Server finishes working
+18:12:54.289 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
+18:12:54.330 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+18:15:16.130 [Thread-0] INFO  server - Server finishes working
+18:15:22.302 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
+18:15:22.337 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+18:15:51.536 [pool-2-thread-1] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=55285,localport=9133]
+18:15:53.867 [pool-2-thread-2] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=55289,localport=9133]
+18:17:58.395 [pool-2-thread-3] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=55386,localport=9133]
+18:19:59.705 [Thread-0] INFO  server - Server finishes working
+18:22:43.150 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
+18:22:43.192 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+18:22:44.725 [pool-2-thread-1] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=55582,localport=9133]
+18:22:48.937 [pool-2-thread-2] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=55588,localport=9133]
+18:26:08.183 [Thread-0] INFO  server - Server finishes working
+18:26:26.280 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
+18:26:26.319 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+18:26:31.964 [Thread-0] INFO  server - Server finishes working
+18:26:39.780 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
+18:26:39.827 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+18:26:40.313 [pool-2-thread-1] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=55708,localport=9133]

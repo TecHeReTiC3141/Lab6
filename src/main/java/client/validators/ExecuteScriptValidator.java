@@ -12,7 +12,7 @@ import java.util.Set;
 public class ExecuteScriptValidator extends BaseValidator {
 
     private Set<String> scriptFilenames;
-    public Request validate(String commandName, String[] args) {
+    public Request validate(String commandName, String[] args, String username) {
         scriptFilenames = new HashSet<>();
         try {
             checkIfOneArgument(commandName, args);
@@ -20,7 +20,7 @@ public class ExecuteScriptValidator extends BaseValidator {
             if (!checkIfNoRecursion(filename)) {
                 return null;
             }
-            return new Request(commandName, args, null);
+            return new Request(commandName, args, null, username);
         } catch (WrongArgumentsException e) {
             System.err.println(e.getMessage());
             return null;

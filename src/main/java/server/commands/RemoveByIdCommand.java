@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Request;
 import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
@@ -17,11 +18,11 @@ public class RemoveByIdCommand extends BaseCommand {
     /**
      * Метод, удаляющий элемент коллекции по его id.
      *
-     * @param commandParts массив, содержащий название аргументы команды
+     * @param request - объект класса Request
      */
 
-    public Response execute(String[] commandParts, Route route) {
-        long id = Long.parseLong(commandParts[0]);
+    public Response execute(Request request) {
+        long id = Long.parseLong(request.getArgs()[0]);
         return new Response(manager.removeById(id));
     }
 }

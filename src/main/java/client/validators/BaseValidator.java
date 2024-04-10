@@ -14,14 +14,25 @@ public abstract class BaseValidator implements IValidator {
     protected boolean needParse = false;
 
     public Request validate(String command, String[] args) {
-        return new Request(command, args, null);
+        return new Request(command, args, null, null);
+    }
+
+    public Request validate(String command, String[] args, String username) {
+        return new Request(command, args, null, username);
     }
 
     public Request validate(String command, String[] args, Route route) {
-        return new Request(command, args, route);
+        return new Request(command, args, route, null);
     }
      public Request validate(String command, String[] args, boolean parse) {
-        return new Request(command, args, null);
+        return new Request(command, args, null, null);
+    }
+
+    public Request validate(String command, String[] args, Route route, String username) {
+        return new Request(command, args, route, username);
+    }
+     public Request validate(String command, String[] args, boolean parse, String username) {
+        return new Request(command, args, null, username);
     }
 
     /**

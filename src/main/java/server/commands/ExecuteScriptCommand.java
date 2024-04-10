@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Request;
 import common.Response;
 import server.CollectionManager;
 
@@ -16,10 +17,10 @@ public class ExecuteScriptCommand extends BaseCommand {
     /**
      * Метод, реализующий логику команды execute_script
      *
-     * @param commandParts название команды и ее аргументы (файл, из которого нужно считать и исполнить скрипт)
+     * @param request название команды и ее аргументы (файл, из которого нужно считать и исполнить скрипт)
      */
 
-    public Response execute(String[] commandParts) {
+    public Response execute(Request request) {
         return new Response("Execute_script has leaked into the server. Please, contact the developers.", false);
     }
 }

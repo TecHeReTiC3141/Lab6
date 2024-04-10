@@ -30,4 +30,11 @@ public class Response implements Serializable {
     public boolean isSuccess() {
         return success;
     }
+
+    public String toString() { // TODO: turn it into a formatted string
+        return "Response{" +
+                "message='" + message + '\'' +
+                ", success=" + success +
+                "}";
+    }
 }

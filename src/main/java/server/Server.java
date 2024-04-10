@@ -5,7 +5,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import server.serverModules.AcceptConnectionModule;
 import server.serverModules.CommandExecutionModule;
 import server.serverModules.RequestReadModule;
 
@@ -38,8 +37,6 @@ public class Server {
      */
     private final CollectionManager manager;
 
-    private final AcceptConnectionModule acceptConnectionModule;
-
     private final DatabaseManager databaseManager;
 
     private final int port = System.getenv("PORT") != null ? Integer.parseInt(System.getenv("PORT")) : 1234;
@@ -59,7 +56,6 @@ public class Server {
     public Server() {
         this.manager = new CollectionManager(new Stack<Route>(), logger);
         this.executor = new CommandExecutionModule(manager);
-        this.acceptConnectionModule = new AcceptConnectionModule(socket);
 
         String credentials = getUserCredentials();
         String[] credentialsParts = credentials.split(" ");
@@ -112,8 +108,16 @@ public class Server {
         handleSave();
 
         while (true) {
-            Socket client = acceptConnectionModule.handleAccept();
+            Socket client = handleAccept();
             fixedThreadPool.submit(new RequestReadModule(client, executor, logger));
+        }
+    }
+
+    public Socket handleAccept() throws IOException {
+        try {
+            return socket.accept();
+        } catch (IOException e) {
+            throw new IOException("Error accepting connection", e);
         }
     }
 

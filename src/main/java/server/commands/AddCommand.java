@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Request;
 import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
@@ -18,11 +19,11 @@ public class AddCommand extends BaseCommand {
     /**
      * Метод, считывающий route и его в коллекци.
      *
-     * @param commandParts массив, содержащий название аргументы команды
+     * @param request - объект класса Request
      */
 
-    public Response execute(String[] commandParts, Route route) {
-        return new Response(manager.putToCollection(route, false));
+    public Response execute(Request request) {
+        return new Response(manager.putToCollection(request.getRoute(), false));
     }
 
 }

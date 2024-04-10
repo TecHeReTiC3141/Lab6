@@ -1,7 +1,7 @@
 package server.serverModules;
 
+import common.Request;
 import common.Response;
-import common.routeClasses.Route;
 import server.CollectionManager;
 import server.commands.*;
 
@@ -24,6 +24,8 @@ public class CommandExecutionModule {
         commands = new HashMap<>() {
             {
                 put("info", new InfoCommand("info", "вывести информацию о коллекции", manager));
+                put("login", new RegisterCommand("login {username} {password}", "авторизоваться в системе"));
+                put("register", new RegisterCommand("register {username} {password}", "создать новый профиль в системе"));
                 put("show", new ShowCommand("show", "вывести все элементы коллекции", manager));
                 put("add", new AddCommand("add {element}", "добавить новый элемент в коллекцию", manager));
                 put("update", new UpdateByIdCommand("update id {element}", "обновить значение элемента коллекции, id которого равен заданному", manager));
@@ -50,8 +52,11 @@ public class CommandExecutionModule {
      * @return true, если команда была успешно обработана, иначе false
      */
 
-    public Response processCommand(String commandName, String[] args, Route route) {
-        BaseCommand command = commands.get(commandName);
-        return command.execute(args, route);
+    public Response processCommand(Request request) { // TODO: replace arguments with Request + in all commands
+        BaseCommand command = commands.get(request.getCommand());
+        if (command.getNeedsAuthed() && !request.getIsLoggedIn()) {
+            return new Response("Вы должны авторизоваться, чтобы выполнить эту команду", false);
+        }
+        return command.execute(request);
     }
 }

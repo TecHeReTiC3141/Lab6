@@ -4,6 +4,7 @@ import client.consoles.FileConsole;
 import client.consoles.SystemInConsole;
 import client.validators.*;
 import common.Request;
+import common.Response;
 import common.exceptions.ExitException;
 import common.exceptions.LostConnectionException;
 import common.exceptions.UnknownCommandException;
@@ -27,7 +28,7 @@ public class Client {
     private ObjectOutputStream toServer;
     private int depth = 0;
 
-    private int username;
+    private String username;
 
     private boolean isLoggedIn = false;
 
@@ -73,49 +74,13 @@ public class Client {
                 reconnectionAttempt = 0;
                 return true;
             } catch (IOException e) {
-                System.out.println("Ошибка подключения.");
+                System.out.println("Ошибка подключения");
                 reconnectionAttempt++;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         } while (reconnectionAttempt <= MAX_RECONNECTION_ATTEMPTS);
         return false;
-    }
-
-    public void authorizeUser() {
-        while (true) {
-            System.out.println("To register a new user, type 'register'. To authorize, type 'authorize'. To exit, type 'exit'.");
-            String input = new SystemInConsole().getLine().trim().toLowerCase();
-            if (input.equals("exit")) {
-                System.out.println("Exiting...");
-                System.exit(0);
-            }
-            if (input.equals("register")) {
-                System.out.println("Enter your username:");
-                String username = new SystemInConsole().getLine();
-                System.out.println("Enter your password:");
-                String password = new SystemInConsole().getLine();
-                Request request = new Request("register", new String[]{username, password}, null);
-                try {
-                    makeRequest(request); // Make separate method for authorization
-                } catch (IOException | LostConnectionException e) {
-                    System.err.println("Failed to register user: " + e.getMessage());
-                }
-            } else if (input.equals("authorize")) {
-                System.out.println("Enter your username:");
-                String username = new SystemInConsole().getLine();
-                System.out.println("Enter your password:");
-                String password = new SystemInConsole().getLine();
-                Request request = new Request("authorize", new String[]{username, password}, null);
-                try {
-                    makeRequest(request); // Make separate method for authorization
-                } catch (IOException | LostConnectionException e) {
-                    System.err.println("Failed to authorize user: " + e.getMessage() + ". Check your credentials");
-                }
-            } else {
-                System.out.println("Invalid input. Please try again.");
-            }
-        }
     }
 
     public void run() {
@@ -125,7 +90,6 @@ public class Client {
             SystemInConsole sc = new SystemInConsole();
 
             System.out.println("Приветствую вас в программе для работы с коллекцией Route! Для дальнейшей работы введите логин и пароль");
-            authorizeUser();
             while (true) {
                 try {
                     Request request = lineToRequest(sc.getLine());
@@ -139,6 +103,8 @@ public class Client {
                 } catch (LostConnectionException e) {
                     System.err.println("Потеряно соединение с сервером, завершаем работу клиента...");
                     System.exit(1);
+                } catch (ClassNotFoundException e) {
+                    System.err.println("Ошибка при чтении ответа от сервера: " + e.getMessage());
                 }
             }
             System.out.println("Socket channel closed");
@@ -162,26 +128,30 @@ public class Client {
             BaseValidator.checkIsValidCommand(commandName, validators.keySet());
             BaseValidator validator = validators.get(commandName);
             if (validator.getNeedParse()) {
-                return validator.validate(commandName, commandParts.toArray(new String[0]), depth > 0);
+                return validator.validate(commandName, commandParts.toArray(new String[0]), depth > 0, username);
             }
-            return validator.validate(commandName, commandParts.toArray(new String[0]));
+            return validator.validate(commandName, commandParts.toArray(new String[0]), username);
         } catch (UnknownCommandException e) {
             System.out.println(e.getMessage());
         }
         return null;
     }
 
-    public void handleRequest(Request request) throws LostConnectionException, IOException {
+    public void handleRequest(Request request) throws LostConnectionException, IOException, ClassNotFoundException {
         if (request == null) return;
         if (request.getCommand().equals("execute_script")) {
             handleExecuteScript(request);
         } else {
-            makeRequest(request);
+            Response response = makeRequest(request);
+            if (response.isSuccess() && (request.getCommand().equals("login")
+                    || request.getCommand().equals("register"))) {
+                isLoggedIn = true;
+                username = request.getArgs()[0];
+            }
         }
-
     }
 
-    public void handleExecuteScript(Request request) throws LostConnectionException {
+    public void handleExecuteScript(Request request) throws LostConnectionException, ClassNotFoundException {
         String filename = request.getArgs()[0];
         try (FileReader reader = new FileReader(filename)) {
             FileConsole console = new FileConsole(reader);
@@ -197,12 +167,15 @@ public class Client {
     }
 
 
+    public Response makeRequest(Request request) throws IOException, LostConnectionException, ClassNotFoundException {
 
-    public void makeRequest(Request request) throws IOException, LostConnectionException {
+        toServer.writeObject(request);
+        toServer.flush();
 
+        Response response = (Response) fromServer.readObject();
 
-        // Display the response received from the server
-        System.out.println(response);
+        System.out.println(response.getMessage());
         System.out.println("-----------------------------------\n");
+        return response;
     }
 }

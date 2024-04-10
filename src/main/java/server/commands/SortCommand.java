@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Request;
 import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
@@ -17,9 +18,10 @@ public class SortCommand extends BaseCommand {
     /**
      * Метод, реализующий логику команды sort.
      *
-     * @param commandParts массив, содержащий название и аргументы команды
+     * @param request - объект класса Request
+
      */
-    public Response execute(String[] commandParts, Route route) {
+    public Response execute(Request request) {
         manager.sortCollection();
         return new Response("Коллекция успешно отсортирована");
     }

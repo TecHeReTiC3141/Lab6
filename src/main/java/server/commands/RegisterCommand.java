@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Request;
 import common.Response;
 
 public class RegisterCommand extends AuthCommand {
@@ -8,7 +9,7 @@ public class RegisterCommand extends AuthCommand {
             super(name, description);
         }
 
-        public Response execute(String[] commandParts, Route route) {
+        public Response execute(Request request) {
             return new Response("Register command executed");
         }
 }

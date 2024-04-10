@@ -32,22 +32,25 @@ public class RequestReadModule implements Runnable {
         Request request;
         Response response;
         try {
+            logger.info("Connection accepted from " + clientSocket);
 
             ObjectInputStream fromClient = new ObjectInputStream(clientSocket.getInputStream());
             ObjectOutputStream toClient = new ObjectOutputStream(clientSocket.getOutputStream());
+            while (true) {
 
-            request = (Request) fromClient.readObject();
-            System.out.println(request);
-            response = executor.processCommand(request.getCommand(), request.getArgs(), request.getRoute());
-            Response responseToSend = response;
-            fixedThreadPool.submit(() -> {
-                try {
-                    toClient.writeObject(responseToSend);
-                    toClient.flush();
-                } catch (IOException e) {
-                    logger.error("Error sending response to client", e);
-                }
-            });
+                request = (Request) fromClient.readObject();
+                System.out.println(request);
+                response = executor.processCommand(request);
+                Response responseToSend = response;
+                fixedThreadPool.submit(() -> {
+                    try {
+                        toClient.writeObject(responseToSend);
+                        toClient.flush();
+                    } catch (IOException e) {
+                        logger.error("Error sending response to client", e);
+                    }
+                });
+            }
         } catch (IOException e) {
             logger.info("Client disconnected");
         } catch (ClassNotFoundException e) {

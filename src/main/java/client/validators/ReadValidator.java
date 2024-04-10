@@ -22,10 +22,10 @@ public class ReadValidator extends BaseValidator {
     protected boolean needParse = true;
 
     @Override
-    public Request validate(String command, String[] args, boolean parse){
+    public Request validate(String command, String[] args, boolean parse, String username){
         try {
             Route route = parse ? parseRoute(args[args.length - 1]) : readRoute();
-            return super.validate(command, args, route);
+            return super.validate(command, args, route, username);
         } catch (ValidationException e) {
             System.out.println(e.getMessage());
             return null;

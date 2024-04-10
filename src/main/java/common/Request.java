@@ -13,10 +13,13 @@ public class Request implements Serializable {
 
     private final Route route;
 
-    public Request(String command, String[] args, Route route) {
+    private String username;
+
+    public Request(String command, String[] args, Route route, String username) {
         this.command = command;
         this.args = args;
         this.route = route;
+        this.username = username;
     }
 
     public String getCommand() {
@@ -30,12 +33,16 @@ public class Request implements Serializable {
     public Route getRoute() {
         return route;
     }
+    public String getUsername() {
+        return username;
+    }
 
-    public String toString() {
-        return "Request{" +
-                "command='" + command + '\'' +
-                ", args=" + Arrays.toString(args) +
-                ", route=" + route +
-                '}';
+    public boolean getIsLoggedIn() {
+        return username != null;
+    }
+
+    public String toString() { // TODO: turn it into a formatted string
+        return "Request{command='%s', args=%s, route=%s, from=%s}"
+                .formatted(command, Arrays.toString(args), route, username);
     }
 }

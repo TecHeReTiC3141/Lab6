@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Request;
 import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
@@ -17,10 +18,10 @@ public class ShowCommand extends BaseCommand {
     /**
      * Метод, реализующий логику команду show.
      *
-     * @param commandParts название и аргументы команды
+     * @param request - объект класса Request
      */
 
-    public Response execute(String[] commandParts, Route route) {
+    public Response execute(Request request) {
         return new Response(manager.showCollection());
     }
 }

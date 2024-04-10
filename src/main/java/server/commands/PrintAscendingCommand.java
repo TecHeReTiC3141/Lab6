@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Request;
 import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
@@ -16,10 +17,10 @@ public class PrintAscendingCommand extends BaseCommand {
     /**
      * Метод, реализующий логику команды print_ascending.
      *
-     * @param commandParts массив, содержащий название и аргументы команды
+     * @param request - объект класса Request
      */
 
-    public Response execute(String[] commandParts, Route route) {
+    public Response execute(Request request) {
 
         return new Response(manager.printAscendingCommand());
     }

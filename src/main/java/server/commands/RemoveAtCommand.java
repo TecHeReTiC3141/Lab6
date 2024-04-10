@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Request;
 import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
@@ -17,12 +18,12 @@ public class RemoveAtCommand extends BaseCommand {
     /**
      * Метод, реализующий логику команды remove_at.
      *
-     * @param commandParts массив, содержащий название и аргументы команды
+     * @param request - объект класса Request
      */
 
-    public Response execute(String[] commandParts, Route route) {
+    public Response execute(Request request) {
         try {
-            manager.removeElementAt(Integer.parseInt(commandParts[0]));
+            manager.removeElementAt(Integer.parseInt(request.getArgs()[0]));
             return new Response("Элемент успешно удален");
         } catch (ArrayIndexOutOfBoundsException e) {
             return new Response("Элемента с таким индексом не существует. Проверьте, что это число больше 0 и меньше размера коллекции", false);

@@ -1,5 +1,8 @@
 package server.commands;
 
+import common.Response;
+import common.routeClasses.Route;
+
 public class LoginCommand extends AuthCommand {
 
     public LoginCommand(String name, String description) {

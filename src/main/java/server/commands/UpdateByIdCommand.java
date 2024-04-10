@@ -1,5 +1,6 @@
 package server.commands;
 
+import common.Request;
 import common.Response;
 import common.routeClasses.Route;
 import server.CollectionManager;
@@ -17,16 +18,16 @@ public class UpdateByIdCommand extends BaseCommand {
     /**
      * Метод, реализующий логику команды update.
      *
-     * @param commandParts массив, содержащий название аргументы команды
+     * @param request - объект класса Request
      */
-    public Response execute(String[] commandParts, Route route) {
-        long id = Long.parseLong(commandParts[0]);
+    public Response execute(Request request) {
+        long id = Long.parseLong(request.getArgs()[0]);
         boolean isFound = manager.findElementById(id);
         if (!isFound) {
             return new Response("Элемент с id " + id + " не найден. Обновление не выполнено.");
         }
-        route.setId(id);
-        return new Response(manager.updateElementById(id, route));
+        request.getRoute().setId(id);
+        return new Response(manager.updateElementById(id, request.getRoute()));
 
     }
 }

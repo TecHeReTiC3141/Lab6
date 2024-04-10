@@ -5,7 +5,7 @@ import common.exceptions.WrongArgumentsException;
 
 public class UpdateByIdValidator extends ReadValidator {
     @Override
-    public Request validate(String command, String[] args, boolean parse) {
+    public Request validate(String command, String[] args, boolean parse, String username) {
         try {
             if (parse) {
                 checkIfTwoArguments(command, args);
@@ -13,7 +13,7 @@ public class UpdateByIdValidator extends ReadValidator {
                 checkIfOneArgument(command, args);
             }
             Long id = Long.parseLong(args[0]);
-            return super.validate(command, args, parse);
+            return super.validate(command, args, parse, username);
         } catch (WrongArgumentsException e) {
             System.out.println(e.getMessage());
             return null;

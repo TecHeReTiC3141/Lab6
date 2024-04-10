@@ -1,7 +1,7 @@
 package server.commands;
 
+import common.Request;
 import common.Response;
-import common.routeClasses.Route;
 import server.CollectionManager;
 
 /**
@@ -22,6 +22,8 @@ public abstract class BaseCommand implements ICommand {
      * The Collection.
      */
     protected CollectionManager manager;
+
+    protected final boolean needsAuthed = false;
 
 
     /**
@@ -51,22 +53,18 @@ public abstract class BaseCommand implements ICommand {
         return name;
     }
 
-    /**
-     * Метод, в котором выполняется логика команды.
-     *
-     * @param commandParts массив, содержащий название и аргументы команды
-     */
-    public Response execute(String[] commandParts, Route route) {
-        return new Response();
+    public boolean getNeedsAuthed() {
+        return needsAuthed;
     }
 
     /**
-     * Метод, в котором выполняется логика команды, при этом нужно обработать передаваемые значения.
+     * Метод, в котором выполняется логика команды.
      *
-     * @param commandParts массив, содержащий название и аргументы команды
-     * @param parse флаг, указывающий, нужно ли парсить аргументы команды
+     * @param request объект класса Request
      */
-    public Response execute(String[] commandParts, Route route, boolean parse) {
+    public Response execute(Request request) {
         return new Response();
     }
+
+
 }

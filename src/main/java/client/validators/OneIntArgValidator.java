@@ -5,11 +5,11 @@ import common.exceptions.WrongArgumentsException;
 
 public class OneIntArgValidator extends BaseValidator {
 
-    public Request validate(String command, String[] args) {
+    public Request validate(String command, String[] args, String username) {
         try {
             checkIfOneArgument(command, args);
             int firstArg = Integer.parseInt(args[0]);
-            return super.validate(command, args);
+            return super.validate(command, args, username);
         } catch (WrongArgumentsException  e) {
             System.out.println(e.getMessage());
             return null;
