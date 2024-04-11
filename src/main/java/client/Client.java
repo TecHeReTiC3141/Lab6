@@ -86,7 +86,11 @@ public class Client {
     public void run() {
 
         try {
-            connectToServer();
+            boolean connected = connectToServer();
+            if (!connected) {
+                System.err.println("Не удалось подключиться к серверу, завершение работы клиента...");
+                System.exit(1);
+            }
             SystemInConsole sc = new SystemInConsole();
 
             System.out.println("Приветствую вас в программе для работы с коллекцией Route! Для дальнейшей работы введите логин и пароль");

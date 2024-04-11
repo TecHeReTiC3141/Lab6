@@ -266,3 +266,12 @@
 19:38:01.325 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
 19:38:03.754 [pool-2-thread-1] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=59141,localport=9133]
 19:38:45.012 [Thread-0] INFO  server - Server finishes working
+20:15:26.043 [main] INFO  server - Connected to the PostgreSQL DB successfully.
+20:15:26.160 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
+20:15:30.299 [pool-2-thread-1] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=61980,localport=9133]
+20:26:04.357 [Thread-0] INFO  server - Server finishes working
+20:26:14.489 [main] INFO  server - Connected to the PostgreSQL DB successfully.
+20:26:14.610 [main] ERROR server - Couldn't load data from DB. Reason: Колонки creation_date не найдено в этом ResultSet’’е.
+20:30:10.147 [main] INFO  server - Connected to the PostgreSQL DB successfully.
+20:32:38.175 [main] INFO  server - Connected to the PostgreSQL DB successfully.
+20:33:48.850 [main] INFO  server - Connected to the PostgreSQL DB successfully.

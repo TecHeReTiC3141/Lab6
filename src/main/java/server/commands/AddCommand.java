@@ -17,13 +17,14 @@ public class AddCommand extends BaseCommand {
     }
 
     /**
-     * Метод, считывающий route и его в коллекци.
+     * Метод, считывающий route и его в коллекцию.
      *
      * @param request - объект класса Request
      */
 
     public Response execute(Request request) {
-        return new Response(collectionManager.putToCollection(request.getRoute(), false));
+        boolean isAdded = databaseManager.addRoute(request.getRoute(), request.getUsername());
+        return new Response(isAdded ? collectionManager.putToCollection(request.getRoute(), false) : "Ошибка при добавлении элемента в базу данных.", isAdded);
     }
 
 }

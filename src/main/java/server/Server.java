@@ -58,7 +58,7 @@ public class Server {
         String[] credentialsParts = credentials.split(" ");
         this.databaseManager = new DatabaseManager(jdbcURL, credentialsParts[0], credentialsParts[1], logger);
 
-        this.manager = new CollectionManager(new Stack<Route>(), logger);
+        this.manager = new CollectionManager(new Stack<Route>(), logger, databaseManager);
         this.executor = new CommandExecutionModule(manager, databaseManager);
 
     }
@@ -88,7 +88,7 @@ public class Server {
         }
     }
 
-    public void run() throws IOException, ClassNotFoundException {
+    public void run() throws IOException {
         this.manager.loadInitialCollection();
         InetSocketAddress address = new InetSocketAddress(port); // создаем адрес сокета (IP-адрес и порт)
 
@@ -97,7 +97,6 @@ public class Server {
                     try {
                         closeSocket();
                         logger.info("Server finishes working");
-                        saveCollection();
                     } catch (IOException e) {
                         //do nothing;
                     }
@@ -105,8 +104,6 @@ public class Server {
         ));
         openSocket();
         logger.info("Server is listening on port %s. Print \"save\" to save current collection".formatted(port));
-        startSavingTask(saveInterval);
-        handleSave();
 
         while (true) {
             Socket client = handleAccept();
@@ -122,6 +119,8 @@ public class Server {
         }
     }
 
+
+    @Deprecated
     private void saveCollection() {
         try {
             if (manager.getIsEmpty()) {
@@ -142,6 +141,7 @@ public class Server {
 
     }
 
+    @Deprecated
     public void startSavingTask(int intervalInSeconds) {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -151,6 +151,7 @@ public class Server {
         scheduler.scheduleAtFixedRate(saveTask, 0, intervalInSeconds, TimeUnit.SECONDS);
     }
 
+    @Deprecated
     public void handleSave() {
         Runnable task = () -> {
             Scanner scanner = new Scanner(System.in);

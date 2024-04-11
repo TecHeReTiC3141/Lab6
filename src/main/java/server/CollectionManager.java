@@ -43,14 +43,12 @@ public class CollectionManager {
 
     private final Logger logger;
 
-    /**
-     * Путь к файлу, в котором хранится коллекция и куда она сохраняется
-     */
-    private final String dataFile = System.getenv("DATA_FILE");
+    private final DatabaseManager databaseManager;
 
-    public CollectionManager(Stack<Route> collection, Logger logger) {
+    public CollectionManager(Stack<Route> collection, Logger logger, DatabaseManager databaseManager) {
         this.collection = collection;
         this.logger = logger;
+        this.databaseManager = databaseManager;
     }
 
     /**
@@ -143,37 +141,12 @@ public class CollectionManager {
      * Метод, загружающий начальную коллекцию из файла в переменной окружения DATA_FILE
      */
     public void loadInitialCollection() {
-        if (dataFile == null) {
-            logger.error("Не найдена переменная окружения DATA_FILE");
-            System.exit(1);
-        }
-        int lastDotIndex = dataFile.lastIndexOf('.');
-        if (lastDotIndex == -1 || !dataFile.substring(lastDotIndex + 1).equals("xml")) {
-            logger.error("Файл должен иметь расширение .xml");
-            System.exit(1);
-        }
-        int lineCount = 0;
+        ArrayList<Route> routes = databaseManager.loadDataFromDatabase();
 
-        try (FileReader reader = new FileReader(dataFile)) {
-
-            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document doc = builder.parse(new InputSource(reader));
-            NodeList routeElements = doc.getDocumentElement().getElementsByTagName("Route");
-            for (int i = 0; i < routeElements.getLength(); ++i) {
-                ++lineCount;
-                Node route = routeElements.item(i);
-                try {
-                    Route newRoute = readFromXML(route);
-                    putToCollection(newRoute, true);
-                } catch (InvalidNameException | InvalidDistanceException | WrongArgumentsException |
-                         AbsentRequiredParametersException e) {
-                    System.err.printf("Ошибка при чтении записи %s: %s%n", lineCount, e.getMessage());
-                }
-            }
-        } catch (IOException | SAXException | ParserConfigurationException e) {
-            logger.error("Ошибка при чтении файла: " + e.getMessage());
-            System.exit(1);
+        for (Route route : routes) {
+            collection.push(route);
         }
+
     }
 
     /**
@@ -221,12 +194,7 @@ public class CollectionManager {
 
     public String putToCollection(Route route, boolean silence) {
         if (route.getId() == 0) {
-            if (collection.isEmpty()) {
-                route.setId(1);
-            } else {
-                long maxId = collection.stream().mapToLong(Route::getId).max().orElse(0) + 1;
-                route.setId(maxId);
-            }
+            route.setId(databaseManager.getLastRouteId() + 1);
         }
 
         collection.push(route);
@@ -369,8 +337,9 @@ public class CollectionManager {
      * @param document объект типа Document
      * @param root     корневой элемент документа
      */
+    @Deprecated
     public void addCollectionToRoot(Document document, Element root) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(dataFile))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("output.xml"))) {
             for (Route route : collection) {
                 Element newRouteRoot = document.createElement("Route");
                 route.appendNode(document, newRouteRoot);
