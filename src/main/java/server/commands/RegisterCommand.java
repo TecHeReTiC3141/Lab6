@@ -12,6 +12,8 @@ public class RegisterCommand extends AuthCommand {
     }
 
     public Response execute(Request request) {
-        return new Response("Register command executed");
+        boolean ok = databaseManager.registerUser(request.getArgs()[0], request.getArgs()[1]);
+        return new Response(ok ? "Пользователь %s успешно зарегистрирован".formatted(request.getArgs()[0])
+                : "Не удалось зарегистрировать пользователя", ok);
     }
 }

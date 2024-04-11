@@ -9,6 +9,9 @@ import server.commands.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * Класс, запускающий команды, введенные пользователем
@@ -25,7 +28,7 @@ public class CommandExecutionModule {
         commands = new HashMap<>() {
             {
                 put("info", new InfoCommand("info", "вывести информацию о коллекции", collectionManager, databaseManager));
-                put("login", new RegisterCommand("login {username} {password}", "авторизоваться в системе", collectionManager, databaseManager));
+                put("login", new LoginCommand("login {username} {password}", "авторизоваться в системе", collectionManager, databaseManager));
                 put("register", new RegisterCommand("register {username} {password}", "создать новый профиль в системе", collectionManager, databaseManager));
                 put("show", new ShowCommand("show", "вывести все элементы коллекции", collectionManager, databaseManager));
                 put("add", new AddCommand("add {element}", "добавить новый элемент в коллекцию", collectionManager, databaseManager));
@@ -53,11 +56,33 @@ public class CommandExecutionModule {
      * @return true, если команда была успешно обработана, иначе false
      */
 
-    public Response processCommand(Request request) { // TODO: replace arguments with Request + in all commands
+    public Response handleRequest(Request request) {
+        FutureTask<Response> future = new FutureTask<>(new RequestExecutor(request));
+        new Thread(future).start();
+        try {
+            return future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            return new Response("Ошибка при выполнении команды", false);
+        }
+    }
+
+    public synchronized Response processCommand(Request request) {
         BaseCommand command = commands.get(request.getCommand());
         if (command.getNeedsAuthed() && !request.getIsLoggedIn()) {
             return new Response("Вы должны авторизоваться, чтобы выполнить эту команду", false);
         }
         return command.execute(request);
+    }
+
+    private class RequestExecutor implements Callable<Response> {
+        private final Request request;
+
+        public RequestExecutor(Request request) {
+            this.request = request;
+        }
+
+        public Response call() {
+            return processCommand(request);
+        }
     }
 }

@@ -216,3 +216,53 @@
 18:53:26.690 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
 18:53:26.734 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
 18:53:30.830 [pool-2-thread-1] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=56907,localport=9133]
+18:58:26.706 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+19:03:26.709 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+19:03:31.962 [Thread-0] INFO  server - Server finishes working
+19:03:39.052 [main] INFO  server - Connected to the PostgreSQL DB successfully.
+19:03:39.071 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
+19:03:39.112 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+19:03:52.785 [pool-2-thread-1] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=57365,localport=9133]
+19:04:37.179 [Thread-0] INFO  server - Server finishes working
+19:04:43.068 [main] INFO  server - Connected to the PostgreSQL DB successfully.
+19:04:43.099 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
+19:04:43.138 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+19:04:46.196 [pool-2-thread-1] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=57414,localport=9133]
+19:05:07.348 [pool-2-thread-1] ERROR server - Couldn't check if user exists. Reason: Не указано значение для параметра 1.
+19:06:07.259 [pool-2-thread-2] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=57453,localport=9133]
+19:06:17.266 [pool-2-thread-2] ERROR server - Couldn't check if user exists. Reason: Не указано значение для параметра 1.
+19:06:17.436 [pool-2-thread-2] ERROR server - Couldn't register user. Reason: ERROR: duplicate key value violates unique constraint "user_username_key"
+  Подробности: Key (username)=(tec) already exists.
+19:06:25.820 [pool-2-thread-2] ERROR server - Couldn't check if user exists. Reason: Не указано значение для параметра 1.
+19:06:42.095 [pool-2-thread-2] INFO  server - Client disconnected
+19:09:43.109 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+19:14:43.108 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+19:19:43.117 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+19:24:43.114 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+19:28:10.362 [Thread-0] INFO  server - Server finishes working
+19:29:49.976 [main] INFO  server - Connected to the PostgreSQL DB successfully.
+19:29:49.995 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
+19:29:50.037 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+19:29:51.951 [pool-2-thread-1] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=58756,localport=9133]
+19:29:57.677 [pool-2-thread-2] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=58766,localport=9133]
+19:30:08.811 [Thread-3] ERROR server - Couldn't check if user exists. Reason: ResultSet not positioned properly, perhaps you need to call next.
+19:30:15.209 [Thread-4] ERROR server - Couldn't check if user exists. Reason: ResultSet not positioned properly, perhaps you need to call next.
+19:30:23.323 [Thread-5] ERROR server - Couldn't check if user exists. Reason: ResultSet not positioned properly, perhaps you need to call next.
+19:30:48.350 [Thread-6] ERROR server - Couldn't check if user exists. Reason: ResultSet not positioned properly, perhaps you need to call next.
+19:30:54.207 [Thread-7] ERROR server - Couldn't check if user exists. Reason: ResultSet not positioned properly, perhaps you need to call next.
+19:31:06.094 [Thread-8] ERROR server - Couldn't check if user exists. Reason: Не указано значение для параметра 1.
+19:31:15.923 [Thread-9] ERROR server - Couldn't check if user exists. Reason: ResultSet not positioned properly, perhaps you need to call next.
+19:32:31.220 [Thread-0] INFO  server - Server finishes working
+19:32:38.831 [main] INFO  server - Connected to the PostgreSQL DB successfully.
+19:32:38.871 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
+19:32:38.924 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+19:32:39.563 [pool-2-thread-1] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=58873,localport=9133]
+19:34:12.896 [Thread-4] ERROR server - Couldn't check if user exists. Reason: ResultSet not positioned properly, perhaps you need to call next.
+19:37:54.149 [Thread-5] ERROR server - Couldn't check if user exists. Reason: ResultSet not positioned properly, perhaps you need to call next.
+19:37:54.163 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+19:37:54.172 [Thread-0] INFO  server - Server finishes working
+19:38:01.262 [main] INFO  server - Connected to the PostgreSQL DB successfully.
+19:38:01.281 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
+19:38:01.325 [pool-3-thread-1] INFO  server - Коллекция успешно сохранена в файл
+19:38:03.754 [pool-2-thread-1] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=59141,localport=9133]
+19:38:45.012 [Thread-0] INFO  server - Server finishes working

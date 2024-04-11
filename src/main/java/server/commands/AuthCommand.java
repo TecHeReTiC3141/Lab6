@@ -8,7 +8,7 @@ import server.DatabaseManager;
 
 public class AuthCommand extends BaseCommand {
 
-    protected final boolean needsAuthed = true;
+    protected final boolean needsAuthed = false;
 
     public AuthCommand(String name, String description, CollectionManager manager, DatabaseManager databaseManager) {
         super(name, description, manager, databaseManager);

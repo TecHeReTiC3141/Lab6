@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import server.serverModules.CommandExecutionModule;
-import server.serverModules.RequestReadModule;
+import server.serverModules.RequestResponseModule;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -56,7 +56,7 @@ public class Server {
     public Server() {
         String credentials = getUserCredentials();
         String[] credentialsParts = credentials.split(" ");
-        this.databaseManager = new DatabaseManager(jdbcURL, credentialsParts[0], credentialsParts[1]);
+        this.databaseManager = new DatabaseManager(jdbcURL, credentialsParts[0], credentialsParts[1], logger);
 
         this.manager = new CollectionManager(new Stack<Route>(), logger);
         this.executor = new CommandExecutionModule(manager, databaseManager);
@@ -110,7 +110,7 @@ public class Server {
 
         while (true) {
             Socket client = handleAccept();
-            fixedThreadPool.submit(new RequestReadModule(client, executor, logger));
+            fixedThreadPool.submit(new RequestResponseModule(client, executor, logger));
         }
     }
 

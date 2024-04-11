@@ -25,7 +25,7 @@ public abstract class BaseCommand implements ICommand {
     protected CollectionManager collectionManager;
     protected DatabaseManager databaseManager;
 
-    protected final boolean needsAuthed = false;
+    protected final boolean needsAuthed = true;
 
 
     /**

@@ -6,14 +6,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.SocketChannel;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class RequestReadModule implements Runnable {
+public class RequestResponseModule implements Runnable {
 
     private final Socket clientSocket;
 
@@ -22,7 +18,7 @@ public class RequestReadModule implements Runnable {
 
     private final ExecutorService fixedThreadPool = Executors.newFixedThreadPool(16);
 
-    public RequestReadModule(Socket clientSocket, CommandExecutionModule executor, Logger logger) {
+    public RequestResponseModule(Socket clientSocket, CommandExecutionModule executor, Logger logger) {
         this.clientSocket = clientSocket;
         this.executor = executor;
         this.logger = logger;
@@ -36,11 +32,11 @@ public class RequestReadModule implements Runnable {
 
             ObjectInputStream fromClient = new ObjectInputStream(clientSocket.getInputStream());
             ObjectOutputStream toClient = new ObjectOutputStream(clientSocket.getOutputStream());
-            while (true) {
 
+            while (true) {
                 request = (Request) fromClient.readObject();
                 System.out.println(request);
-                response = executor.processCommand(request);
+                response = executor.handleRequest(request);
                 Response responseToSend = response;
                 fixedThreadPool.submit(() -> {
                     try {
