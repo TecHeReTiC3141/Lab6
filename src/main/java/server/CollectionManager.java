@@ -8,12 +8,6 @@ import common.exceptions.WrongArgumentsException;
 import common.routeClasses.*;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.*;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -39,7 +33,7 @@ public class CollectionManager {
      */
     private final Date initDate = new Date();
 
-    private Stack<Route> collection;
+    private Stack<Route> collection; // TODO: make collection concurrent thread-safe
 
     private final Logger logger;
 
@@ -194,7 +188,7 @@ public class CollectionManager {
 
     public String putToCollection(Route route, boolean silence) {
         if (route.getId() == 0) {
-            route.setId(databaseManager.getLastRouteId() + 1);
+            route.setId(databaseManager.getLastRouteId());
         }
 
         collection.push(route);

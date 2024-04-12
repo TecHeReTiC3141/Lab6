@@ -38,6 +38,10 @@ public class DatabaseManager {
 
     private static final String INSERT_ROUTE = "INSERT INTO route (user_id, name, coordinates_x, coordinates_y, " +
             "from_x, from_y, from_z, to_x, to_y, to_z, to_name, distance) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String UPDATE_ROUTE_BY_ID = "UPDATE route " +
+            "SET user_id = ?, name = ?, coordinates_x = ?, coordinates_y = ?, " +
+            "from_x = ?, from_y = ?, from_z = ?, to_x = ?, to_y = ?, to_z = ?, to_name = ?, distance = ?" +
+            "WHERE id = ?";
 
     public DatabaseManager(String URL, String username, String password, Logger logger) {
         this.URL = URL;
@@ -142,6 +146,16 @@ public class DatabaseManager {
         }
     }
 
+    private boolean routeExists(long id) {
+        try (PreparedStatement statement = connection.prepareStatement(GET_ROUTE_BY_ID)) {
+            statement.setLong(1, id);
+            return statement.executeQuery().next();
+        } catch (SQLException e) {
+            logger.error("Couldn't check if route exists. Reason: " + e.getMessage());
+            return false;
+        }
+    }
+
     public int getUserId(String username) {
         try (PreparedStatement statement = connection.prepareStatement(GET_USER_BY_USERNAME)) {
             statement.setString(1, username);
@@ -156,20 +170,18 @@ public class DatabaseManager {
         }
     }
 
-    public boolean isRouteOwner(String username, int routeId) {
+    public boolean isRouteOwner(String username, long routeId) {
         int userId = getUserId(username);
         if (userId == -1) return false;
+        if (!routeExists(routeId)) return false;
         try (PreparedStatement routeStatement = connection.prepareStatement(GET_ROUTE_BY_ID)) {
-            routeStatement.setInt(1, routeId);
+            routeStatement.setLong(1, routeId);
             ResultSet rs = routeStatement.executeQuery();
             if (!rs.next()) return false;
-            Route route = extractRouteFromEntry(rs);
-            return route.getId() == routeId;
+            long ownerId = rs.getLong("user_id");
+            return ownerId == userId;
         } catch (SQLException e) {
             logger.error("Couldn't check if user is owner. Reason: " + e.getMessage());
-            return false;
-        } catch (InvalidDataBaseEntryException e) {
-            logger.error("Invalid route entry in DB. Reason: " + e.getMessage());
             return false;
         }
     }
@@ -192,11 +204,8 @@ public class DatabaseManager {
         return route;
     }
 
-    public boolean addRoute(Route route, String username) {
-        int userId = getUserId(username);
-        if (userId == -1) return false;
-        try (PreparedStatement statement = connection.prepareStatement(INSERT_ROUTE)) {
-            statement.setInt(1, userId);
+    public void insertRouteDataIntoStatement(Route route, PreparedStatement statement) {
+        try {
             statement.setString(2, route.getName());
             statement.setLong(3, route.getCoordinates().getX());
             statement.setLong(4, route.getCoordinates().getY());
@@ -212,12 +221,37 @@ public class DatabaseManager {
             statement.setFloat(8, route.getTo().getX());
             statement.setFloat(9, route.getTo().getY());
             statement.setDouble(10, route.getTo().getZ());
-            statement.setString(11, route.getTo().getName());
+            statement.setString(11, route.getTo().getName() != null? route.getTo().getName() : "");
             statement.setDouble(12, route.getDistance());
+        } catch (SQLException e) {
+            logger.error("Couldn't insert route data into statement. Reason: " + e.getMessage());
+        }
+    }
+
+    public boolean addRoute(Route route, String username) {
+        int userId = getUserId(username);
+        if (userId == -1) return false;
+        try (PreparedStatement statement = connection.prepareStatement(INSERT_ROUTE)) {
+            statement.setInt(1, userId);
+            insertRouteDataIntoStatement(route, statement);
             statement.executeUpdate();
             return true;
         } catch (SQLException e) {
             logger.error("Couldn't add route. Reason: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean updateRouteById(Route route, long routeId, String username) {
+        if (!isRouteOwner(username, routeId)) return false;
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_ROUTE_BY_ID)) {
+            statement.setInt(1, getUserId(username));
+            insertRouteDataIntoStatement(route, statement);
+            statement.setLong(13, routeId);
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            logger.error("Couldn't update route. Reason: " + e.getMessage());
             return false;
         }
     }

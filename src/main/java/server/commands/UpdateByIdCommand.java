@@ -22,12 +22,13 @@ public class UpdateByIdCommand extends BaseCommand {
      */
     public Response execute(Request request) {
         long id = Long.parseLong(request.getArgs()[0]);
-        boolean isFound = collectionManager.findElementById(id);
-        if (!isFound) {
-            return new Response("Элемент с id " + id + " не найден. Обновление не выполнено.");
+        boolean isUpdated = databaseManager.updateRouteById(request.getRoute(), id, request.getUsername());
+        if (!isUpdated) {
+            return new Response("Элемент с id " + id +
+                    " не обновлен. Возможно, его не существует или у Вас нет прав его модифицикации .", false);
         }
         request.getRoute().setId(id);
-        return new Response(collectionManager.updateElementById(id, request.getRoute()));
+        return new Response(collectionManager.updateElementById(id, request.getRoute()), true);
 
     }
 }

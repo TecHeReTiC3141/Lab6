@@ -275,3 +275,29 @@
 20:30:10.147 [main] INFO  server - Connected to the PostgreSQL DB successfully.
 20:32:38.175 [main] INFO  server - Connected to the PostgreSQL DB successfully.
 20:33:48.850 [main] INFO  server - Connected to the PostgreSQL DB successfully.
+20:34:59.066 [main] INFO  server - Connected to the PostgreSQL DB successfully.
+20:34:59.181 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
+20:35:35.597 [pool-2-thread-1] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=54642,localport=9133]
+20:37:35.517 [Thread-8] ERROR server - Couldn't add route. Reason: ERROR: null value in column "from_x" of relation "route" violates not-null constraint
+  Подробности: Failing row contains (2, 4, boro, 231, 2341, null, null, null, 42421.1, 23.1, 321, null, 24, 2024-04-11 20:37:34.546069).
+20:38:33.483 [pool-2-thread-1] INFO  server - Client disconnected
+20:38:35.884 [pool-2-thread-2] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=55528,localport=9133]
+20:38:38.924 [Thread-0] INFO  server - Server finishes working
+20:38:42.711 [main] INFO  server - Connected to the PostgreSQL DB successfully.
+20:38:42.831 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
+20:38:43.445 [pool-2-thread-1] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=55576,localport=9133]
+20:39:02.586 [Thread-4] ERROR server - Couldn't add route. Reason: ERROR: null value in column "from_x" of relation "route" violates not-null constraint
+  Подробности: Failing row contains (3, 4, borp, 131, 41234, null, null, null, 131, 341, 2341, , 24, 2024-04-11 20:39:01.613447).
+20:45:45.490 [Thread-0] INFO  server - Server finishes working
+20:15:50.753 [main] INFO  server - Connected to the PostgreSQL DB successfully.
+20:15:50.850 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
+20:15:55.651 [pool-2-thread-1] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=61836,localport=9133]
+20:15:59.839 [pool-2-thread-2] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=61840,localport=9133]
+20:16:13.571 [Thread-3] ERROR server - Couldn't check if user exists. Reason: Не указано значение для параметра 1.
+20:20:28.485 [Thread-0] INFO  server - Server finishes working
+20:20:38.678 [main] INFO  server - Connected to the PostgreSQL DB successfully.
+20:20:38.781 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
+20:20:39.708 [pool-2-thread-1] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=62255,localport=9133]
+20:24:29.409 [Thread-0] INFO  server - Server finishes working
+20:24:42.822 [main] INFO  server - Connected to the PostgreSQL DB successfully.
+20:24:42.936 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
