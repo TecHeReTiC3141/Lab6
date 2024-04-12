@@ -9,11 +9,11 @@ import common.exceptions.ExitException;
 import common.exceptions.LostConnectionException;
 import common.exceptions.UnknownCommandException;
 
-import java.io.*;
-import java.net.InetSocketAddress;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
 import java.util.*;
 
 public class Client {

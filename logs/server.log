@@ -308,3 +308,10 @@
 22:40:38.320 [main] ERROR server - Couldn't connect to DB. Reason: Подсоединение по адресу localhost:5488 отклонено. Проверьте что хост и порт указаны правильно и что postmaster принимает TCP/IP-подсоединения.
 22:41:42.962 [main] ERROR server - Couldn't connect to DB. Reason: Подсоединение по адресу localhost:5488 отклонено. Проверьте что хост и порт указаны правильно и что postmaster принимает TCP/IP-подсоединения.
 22:43:44.914 [main] ERROR server - Couldn't connect to DB. Reason: Подсоединение по адресу localhost:5488 отклонено. Проверьте что хост и порт указаны правильно и что postmaster принимает TCP/IP-подсоединения.
+22:46:20.428 [main] INFO  server - Connected to the PostgreSQL DB successfully.
+22:46:20.541 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
+22:46:32.754 [pool-2-thread-1] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=52906,localport=9133]
+22:46:37.147 [pool-2-thread-1] INFO  server - Client disconnected
+22:46:38.175 [pool-2-thread-2] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=52924,localport=9133]
+22:46:48.010 [pool-2-thread-3] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=52980,localport=9133]
+23:12:22.453 [Thread-0] INFO  server - Server finishes working

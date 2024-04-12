@@ -1,26 +1,13 @@
 package server;
 
-import common.RouteDataValidator;
-import common.exceptions.AbsentRequiredParametersException;
-import common.exceptions.InvalidDistanceException;
-import common.exceptions.InvalidNameException;
-import common.exceptions.WrongArgumentsException;
-import common.routeClasses.*;
+import common.routeClasses.Route;
+import common.routeClasses.RouteDistanceComparator;
 import org.apache.logging.log4j.Logger;
-import org.w3c.dom.*;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.*;
-import java.io.*;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Класс, отвечающий за работу коллекции
@@ -33,102 +20,16 @@ public class CollectionManager {
      */
     private final Date initDate = new Date();
 
-    private Stack<Route> collection; // TODO: make collection concurrent thread-safe
+    private CopyOnWriteArrayList<Route> collection; // TODO: make collection concurrent thread-safe
 
     private final Logger logger;
 
     private final DatabaseManager databaseManager;
 
-    public CollectionManager(Stack<Route> collection, Logger logger, DatabaseManager databaseManager) {
+    public CollectionManager(CopyOnWriteArrayList<Route> collection, Logger logger, DatabaseManager databaseManager) {
         this.collection = collection;
         this.logger = logger;
         this.databaseManager = databaseManager;
-    }
-
-    /**
-     * Метод для чтения маршрута из XML-файла.
-     * Используется для изначального чтения маршрутов из файла из системной переменной DATA_FILE.
-     *
-     * @param routeNode узел XML-файла, содержащий информацию о маршруте
-     * @return прочитанный объект класса Route
-     * @throws InvalidNameException              если имя маршрута некорректно
-     * @throws InvalidDistanceException          если дистанция маршрута некорректна
-     * @throws WrongArgumentsException           если есть некорректные аргументы
-     * @throws AbsentRequiredParametersException если не хватает обязательных параметров
-     */
-
-    public Route readFromXML(Node routeNode) throws InvalidNameException, WrongArgumentsException, InvalidDistanceException, AbsentRequiredParametersException {
-        ArrayList<String> requiredParams = new ArrayList<>(
-                List.of("name, distance, coordinates, creationDate, locationTo".split(", "))
-        );
-
-        Route route = new Route();
-        DateTimeFormatter formatter = route.getDateFormat();
-
-        NodeList children = routeNode.getChildNodes();
-        for (int i = 0; i < children.getLength(); ++i) {
-            Node child = children.item(i);
-            NamedNodeMap attributes = child.getAttributes();
-            Node xNode, yNode, zNode;
-            switch (child.getNodeName()) {
-                case "#text":
-                    break;
-                case "id":
-                    route.setId(Long.parseLong(attributes.getNamedItem("value").getNodeValue()));
-                    break;
-                case "name":
-                    route.setName(RouteDataValidator.checkName(attributes.getNamedItem("value").getNodeValue()));
-                    break;
-                case "coordinates":
-                    route.setCoordinates(new Coordinates(
-                            Long.parseLong(attributes.getNamedItem("x").getNodeValue()),
-                            Long.parseLong(attributes.getNamedItem("y").getNodeValue())
-                    ));
-                    break;
-                case "creationDate":
-                    route.setCreationDate(ZonedDateTime.of(LocalDateTime.parse(
-                            attributes.getNamedItem("value").getNodeValue(),
-                            formatter), ZoneId.of("UTC+3")));
-                    break;
-                case "locationFrom":
-                    xNode = attributes.getNamedItem("x");
-                    yNode = attributes.getNamedItem("y");
-                    zNode = attributes.getNamedItem("z");
-                    if (xNode == null || yNode == null || zNode == null) {
-                        break;
-                    }
-                    route.setFrom(new LocationFrom(
-                            Integer.parseInt(xNode.getNodeValue()),
-                            Long.parseLong(yNode.getNodeValue()),
-                            Double.parseDouble(zNode.getNodeValue())));
-                    break;
-                case "locationTo":
-                    xNode = attributes.getNamedItem("x");
-                    yNode = attributes.getNamedItem("y");
-                    zNode = attributes.getNamedItem("z");
-                    Node nameNode = attributes.getNamedItem("name");
-                    if (xNode == null || yNode == null || zNode == null) {
-                        throw new WrongArgumentsException("В поле locationTo не хватает обязательных атрибутов");
-                    }
-                    route.setTo(new LocationTo(
-                            Float.parseFloat(xNode.getNodeValue()),
-                            Float.parseFloat(yNode.getNodeValue()),
-                            Float.parseFloat(zNode.getNodeValue()),
-                            nameNode != null ? nameNode.getNodeValue() : "null"));
-                    break;
-                case "distance":
-                    route.setDistance(RouteDataValidator.checkDistance(attributes.getNamedItem("value").getNodeValue()));
-                    break;
-                default:
-                    throw new WrongArgumentsException("Лишнее поле: " + child.getNodeName());
-
-            }
-            requiredParams.remove(child.getNodeName());
-        }
-        if (!requiredParams.isEmpty()) {
-            throw new AbsentRequiredParametersException("Не хватает обязательных параметров: " + requiredParams);
-        }
-        return route;
     }
 
     /**
@@ -137,9 +38,7 @@ public class CollectionManager {
     public void loadInitialCollection() {
         ArrayList<Route> routes = databaseManager.loadDataFromDatabase();
 
-        for (Route route : routes) {
-            collection.push(route);
-        }
+        collection.addAll(routes);
 
     }
 
@@ -191,7 +90,7 @@ public class CollectionManager {
             route.setId(databaseManager.getLastRouteId());
         }
 
-        collection.push(route);
+        collection.add(route);
         if (!silence) return "Маршрут успешно добавлен в коллекцию";
         return "Silently added";
     }
@@ -284,72 +183,6 @@ public class CollectionManager {
     }
 
     /**
-     * Метод, преобразующий объект типа Node в строку.
-     *
-     * @param node               объект типа Node
-     * @param omitXmlDeclaration true, если необходимо убрать xml-заголовок
-     * @param prettyPrint        true, если необходимо красиво оформить xml
-     * @return строковое представление объекта типа Node
-     */
-
-    public static String nodeToString(Node node, boolean omitXmlDeclaration, boolean prettyPrint) {
-        if (node == null) {
-            throw new IllegalArgumentException("node is null.");
-        }
-
-        try {
-            node.normalize();
-            XPath xpath = XPathFactory.newInstance().newXPath();
-            XPathExpression expr = xpath.compile("//text()[normalize-space()='']");
-            NodeList nodeList = (NodeList) expr.evaluate(node, XPathConstants.NODESET);
-
-            for (int i = 0; i < nodeList.getLength(); ++i) {
-                Node nd = nodeList.item(i);
-                nd.getParentNode().removeChild(nd);
-            }
-
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-
-            if (omitXmlDeclaration) {
-                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            }
-
-            if (prettyPrint) {
-                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-                transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-            }
-
-            StringWriter writer = new StringWriter();
-            transformer.transform(new DOMSource(node), new StreamResult(writer));
-            return writer.toString();
-        } catch (TransformerException | XPathExpressionException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    /**
-     * Метод, добавляющий коллекцию в корень xml документа.
-     *
-     * @param document объект типа Document
-     * @param root     корневой элемент документа
-     */
-    @Deprecated
-    public void addCollectionToRoot(Document document, Element root) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("output.xml"))) {
-            for (Route route : collection) {
-                Element newRouteRoot = document.createElement("Route");
-                route.appendNode(document, newRouteRoot);
-                root.appendChild(newRouteRoot);
-            }
-            writer.write(nodeToString(document, false, true));
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    /**
      * Метод, выводящий коллекцию.
      */
 
@@ -366,7 +199,8 @@ public class CollectionManager {
      * Метод, сортирующий коллекцию в естественном порядке.
      */
     public void sortCollection() {
-        this.collection = collection.stream().sorted().collect(Stack::new, Stack::push, Stack::addAll);
+        this.collection = collection.stream().sorted()
+                .collect(CopyOnWriteArrayList::new, CopyOnWriteArrayList::add, CopyOnWriteArrayList::addAll);
     }
 
     /**
@@ -397,5 +231,4 @@ public class CollectionManager {
         }
         return "Не найдено";
     }
-
 }
