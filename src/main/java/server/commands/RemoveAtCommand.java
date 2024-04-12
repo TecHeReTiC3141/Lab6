@@ -2,6 +2,7 @@ package server.commands;
 
 import common.Request;
 import common.Response;
+import common.routeClasses.Route;
 import server.CollectionManager;
 import server.DatabaseManager;
 
@@ -23,8 +24,14 @@ public class RemoveAtCommand extends BaseCommand {
 
     public Response execute(Request request) {
         try {
-            collectionManager.removeElementAt(Integer.parseInt(request.getArgs()[0]));
-            return new Response("Элемент успешно удален");
+            long id = collectionManager.getElementIdAtIndex(Integer.parseInt(request.getArgs()[0]));
+            boolean isDeleted = databaseManager.removeRouteById(id, request.getUsername());
+            if (isDeleted) {
+                collectionManager.removeElementAt(Integer.parseInt(request.getArgs()[0]));
+                return new Response("Элемент успешно удален", true);
+            }
+            return new Response("Элемент на позиции " + Integer.parseInt(request.getArgs()[0]) +
+                        " не обновлен. Возможно, его не существует или у Вас нет прав его модификации", false);
         } catch (ArrayIndexOutOfBoundsException e) {
             return new Response("Элемента с таким индексом не существует. Проверьте, что это число больше 0 и меньше размера коллекции", false);
         }

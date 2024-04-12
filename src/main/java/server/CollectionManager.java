@@ -247,10 +247,14 @@ public class CollectionManager {
      * @param index индекс элемента, который нужно удалить
      */
 
-    public void removeElementAt(int index) {
+    public Long getElementIdAtIndex(int index) {
         if (index < 0 || index >= collection.size()) {
             throw new ArrayIndexOutOfBoundsException();
         }
+        return collection.get(index).getId();
+    }
+
+    public void removeElementAt(int index) {
         collection.remove(index);
     }
 

@@ -25,7 +25,7 @@ public class UpdateByIdCommand extends BaseCommand {
         boolean isUpdated = databaseManager.updateRouteById(request.getRoute(), id, request.getUsername());
         if (!isUpdated) {
             return new Response("Элемент с id " + id +
-                    " не обновлен. Возможно, его не существует или у Вас нет прав его модифицикации .", false);
+                    " не обновлен. Возможно, его не существует или у Вас нет прав его модификации", false);
         }
         request.getRoute().setId(id);
         return new Response(collectionManager.updateElementById(id, request.getRoute()), true);

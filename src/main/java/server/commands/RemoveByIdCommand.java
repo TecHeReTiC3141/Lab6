@@ -23,6 +23,8 @@ public class RemoveByIdCommand extends BaseCommand {
 
     public Response execute(Request request) {
         long id = Long.parseLong(request.getArgs()[0]);
-        return new Response(collectionManager.removeById(id));
+        boolean isDeleted = databaseManager.removeRouteById(id, request.getUsername());
+        return new Response(isDeleted ? collectionManager.removeById(id) : "Элемент с id " + id +
+                " не обновлен. Возможно, его не существует или у Вас нет прав его модификации", isDeleted);
     }
 }

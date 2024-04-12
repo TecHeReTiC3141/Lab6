@@ -43,6 +43,10 @@ public class DatabaseManager {
             "from_x = ?, from_y = ?, from_z = ?, to_x = ?, to_y = ?, to_z = ?, to_name = ?, distance = ?" +
             "WHERE id = ?";
 
+
+    private static final String REMOVE_ROUTE_BY_ID = "DELETE FROM route WHERE id = ?";
+
+
     public DatabaseManager(String URL, String username, String password, Logger logger) {
         this.URL = URL;
         this.username = username;
@@ -252,6 +256,18 @@ public class DatabaseManager {
             return true;
         } catch (SQLException e) {
             logger.error("Couldn't update route. Reason: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean removeRouteById(long routeId, String username) {
+        if (!isRouteOwner(username, routeId)) return false;
+        try (PreparedStatement statement = connection.prepareStatement(REMOVE_ROUTE_BY_ID)) {
+            statement.setLong(1, routeId);
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            logger.error("Couldn't remove route. Reason: " + e.getMessage());
             return false;
         }
     }
