@@ -8,7 +8,6 @@ import common.routeClasses.Route;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -46,6 +45,7 @@ public class DatabaseManager {
 
     private static final String REMOVE_ROUTE_BY_ID = "DELETE FROM route WHERE id = ?";
 
+    private static final String CLEAR_ALL_USER_ROUTES = "DELETE FROM route WHERE user_id = ?";
 
     public DatabaseManager(String URL, String username, String password, Logger logger) {
         this.URL = URL;
@@ -204,6 +204,7 @@ public class DatabaseManager {
         route.setFrom(new LocationFrom(rs.getInt("from_x"), rs.getLong("from_y"), rs.getDouble("from_z")));
         route.setTo(new LocationTo(rs.getFloat("to_x"), rs.getFloat("to_y"), rs.getFloat("to_z"), rs.getString("to_name")));
         route.setDistance(rs.getLong("distance"));
+        route.setCreatorId(rs.getInt("user_id"));
         if (route.getDistance() < 1) throw new InvalidDataBaseEntryException("Invalid distance");
         return route;
     }
@@ -271,5 +272,20 @@ public class DatabaseManager {
             return false;
         }
     }
+
+    public boolean removeAllUserRoutes(String username) {
+        int userId = getUserId(username);
+        if (userId == -1) return false;
+        try (PreparedStatement statement = connection.prepareStatement(CLEAR_ALL_USER_ROUTES)) {
+            statement.setInt(1, userId);
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            logger.error("Couldn't remove all user routes. Reason: " + e.getMessage());
+            return false;
+        }
+    }
+
+
 
 }

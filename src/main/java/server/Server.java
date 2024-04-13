@@ -91,13 +91,11 @@ public class Server {
                     try {
                         closeSocket();
                         logger.info("Server finishes working");
-                    } catch (IOException e) {
-                        //do nothing;
-                    }
+                    } catch (IOException ignored) {}
                 }
         ));
         openSocket();
-        logger.info("Server is listening on port %s. Print \"save\" to save current collection".formatted(port));
+        logger.info("Server is listening on port %s".formatted(port));
 
         while (true) {
             Socket client = handleAccept();

@@ -315,3 +315,18 @@
 22:46:38.175 [pool-2-thread-2] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=52924,localport=9133]
 22:46:48.010 [pool-2-thread-3] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=52980,localport=9133]
 23:12:22.453 [Thread-0] INFO  server - Server finishes working
+23:12:57.049 [main] INFO  server - Connected to the PostgreSQL DB successfully.
+23:12:57.149 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
+23:13:01.828 [pool-2-thread-1] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=60397,localport=9133]
+23:13:04.904 [pool-2-thread-2] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=60401,localport=9133]
+23:21:54.039 [Thread-0] INFO  server - Server finishes working
+22:53:04.680 [main] ERROR server - Couldn't connect to DB. Reason: Подсоединение по адресу localhost:5488 отклонено. Проверьте что хост и порт указаны правильно и что postmaster принимает TCP/IP-подсоединения.
+22:53:23.218 [main] ERROR server - Couldn't connect to DB. Reason: Подсоединение по адресу localhost:5488 отклонено. Проверьте что хост и порт указаны правильно и что postmaster принимает TCP/IP-подсоединения.
+22:53:48.116 [main] ERROR server - Couldn't connect to DB. Reason: Подсоединение по адресу localhost:5488 отклонено. Проверьте что хост и порт указаны правильно и что postmaster принимает TCP/IP-подсоединения.
+22:54:20.269 [main] ERROR server - Couldn't connect to DB. Reason: Подсоединение по адресу localhost:5488 отклонено. Проверьте что хост и порт указаны правильно и что postmaster принимает TCP/IP-подсоединения.
+22:54:35.650 [main] ERROR server - Couldn't connect to DB. Reason: Подсоединение по адресу localhost:5488 отклонено. Проверьте что хост и порт указаны правильно и что postmaster принимает TCP/IP-подсоединения.
+22:55:13.699 [main] INFO  server - Connected to the PostgreSQL DB successfully.
+22:55:13.808 [main] INFO  server - Server is listening on port 9133. Print "save" to save current collection
+22:56:00.159 [pool-2-thread-1] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=65049,localport=9133]
+22:56:02.437 [pool-2-thread-2] INFO  server - Connection accepted from Socket[addr=/127.0.0.1,port=65055,localport=9133]
+22:57:43.062 [Thread-0] INFO  server - Server finishes working

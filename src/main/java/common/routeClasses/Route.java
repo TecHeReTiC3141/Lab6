@@ -205,10 +205,10 @@ public class Route implements Comparable<Route>, Serializable {
      * @return the string
      */
     public String showValues() {
-        return "id=%s,name=%s,coordinatesX=%s,coordinatesY=%s,creationDate=%s,toX=%s,toY=%s,toZ=%s,toName=%s,distance=%s".formatted(
+        return "id=%s,name=%s,coordinatesX=%s,coordinatesY=%s,creationDate=%s,toX=%s,toY=%s,toZ=%s,toName=%s,distance=%s,creator_id=%s".formatted(
                 getId(), getName(), getCoordinates().getX(), getCoordinates().getY(),
                 getCreationDate().format(dateFormat), getTo().getX(), getTo().getY(), getTo().getZ(),
-                (getTo().getName() == null) ? "null" : getTo().getName(), getDistance())
+                (getTo().getName() == null) ? "null" : getTo().getName(), getDistance(), getCreatorId())
                 + (getFrom() == null ? "" : ",fromX=%s,fromY=%s,fromZ=%s".formatted(getFrom().getX(),
                 getFrom().getY(), getFrom().getZ()));
     }

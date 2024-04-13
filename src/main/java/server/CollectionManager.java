@@ -98,8 +98,9 @@ public class CollectionManager {
     /**
      * Метод, очищающий коллекцию.
      */
-    public void clearCollection() {
-        collection.clear();
+    public void removeAllUserRoutes(long userId) {
+        collection = collection.stream().filter(route -> route.getCreatorId() != userId)
+                .collect(CopyOnWriteArrayList::new, CopyOnWriteArrayList::add, CopyOnWriteArrayList::addAll);
     }
 
     /**

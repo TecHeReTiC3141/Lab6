@@ -22,7 +22,12 @@ public class ClearCommand extends BaseCommand {
      */
 
     public Response execute(Request request) {
-        collectionManager.clearCollection();
-        return new Response("Коллекция очищена");
+        boolean areDeleted = databaseManager.removeAllUserRoutes(request.getUsername());
+        if (areDeleted) {
+            long userId = databaseManager.getUserId(request.getUsername());
+            collectionManager.removeAllUserRoutes(userId);
+            return new Response("Все ваши маршруты были успешно удалены из коллекции");
+        }
+        return new Response("Коллекция не была очищена от ваших маршрутов. Возможно, у Вас нет прав на удаление элементов коллекции");
     }
 }
